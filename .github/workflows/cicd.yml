@@ -105,9 +105,9 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: tienda.settings
         run: |
-          source /home/ubuntu/venv/bin/activate
-          python manage.py collectstatic --noinput
-
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} \
+            'source /home/ubuntu/venv/bin/activate && cd /home/ubuntu/tienda-django && python manage.py collectstatic --noinput'
+  
 
       - name: Deploy to EC2
         run: |
