@@ -1,0 +1,48 @@
+<!-- core/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tienda{% endblock %}</title>
+
+    {% load static %}
+    
+    <!-- Normalize CSS -->
+    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="{% static 'materialize/css/materialize.min.css' %}">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">Tienda</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Products</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content block -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="{% static 'materialize/js/materialize.min.js' %}"></script>
+
+    <!-- Initialize Materialize components -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        M.AutoInit();  // Inicializa automáticamente todos los componentes de Materialize
+      });
+    </script>
+</body>
+</html>

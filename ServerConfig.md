@@ -107,7 +107,7 @@ This document outlines the server setup for deploying the Django project "Tienda
         }
 
         location /static/ {
-            alias /home/ubuntu/tienda/static/;
+            alias /home/ubuntu/tienda/staticfiles/;
         }
 
         location /media/ {

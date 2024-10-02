@@ -87,10 +87,26 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
             sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/media/
-            sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/static/
             sudo chmod -R 775 /home/ubuntu/tienda-django/media/
-            sudo chmod -R 775 /home/ubuntu/tienda-django/static/
           EOF
+
+      - name: Install npm dependencies
+        run: |
+          npm install
+
+      - name: Copy Normalize and Materialize to static directory
+        run: |
+          mkdir -p static/css static/materialize/css static/materialize/js
+          cp node_modules/normalize.css/normalize.css static/css/
+          cp node_modules/materialize-css/dist/css/materialize.min.css static/materialize/css/
+          cp node_modules/materialize-css/dist/js/materialize.min.js static/materialize/js/
+
+      - name: Run Django collectstatic
+        env:
+          DJANGO_SETTINGS_MODULE: tienda.settings
+        run: |
+          python manage.py collectstatic --noinput
+
 
       - name: Deploy to EC2
         run: |
@@ -100,14 +116,15 @@ jobs:
             source /home/ubuntu/venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
+            python manage.py collectstatic --noinput --clear
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
             sudo chown -R www-data:www-data /home/ubuntu/tienda-django/media/
-            sudo chown -R www-data:www-data /home/ubuntu/tienda-django/static/
+            sudo chown -R www-data:www-data /home/ubuntu/tienda-django/staticfiles/
             sudo chmod -R 775 /home/ubuntu/tienda-django/media/
-            sudo chmod -R 775 /home/ubuntu/tienda-django/static/
+            sudo chmod -R 775 /home/ubuntu/tienda-django/staticfiles/
             sudo systemctl restart gunicorn
           EOF
