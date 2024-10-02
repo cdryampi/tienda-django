@@ -98,7 +98,6 @@ jobs:
             cd /home/ubuntu/tienda-django
             git pull origin master
             source /home/ubuntu/venv/bin/activate
-            cd /home/ubuntu/tienda-django/tienda
             pip install -r requirements.txt
             python manage.py migrate
             python manage.py collectstatic --noinput
