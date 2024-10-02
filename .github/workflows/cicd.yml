@@ -96,7 +96,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
             cd /home/ubuntu/tienda-django
-            git pull origin master
+            git pull origin main
             source /home/ubuntu/venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
