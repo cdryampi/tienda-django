@@ -86,8 +86,10 @@ jobs:
       - name: Prepare permissions before pull
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-            sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/tienda/media/
-            sudo chmod -R 775 /home/ubuntu/tienda-django/tienda/media/
+            sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/media/
+            sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/static/
+            sudo chmod -R 775 /home/ubuntu/tienda-django/media/
+            sudo chmod -R 775 /home/ubuntu/tienda-django/static/
           EOF
 
       - name: Deploy to EC2
@@ -105,7 +107,9 @@ jobs:
       - name: Restore permissions after pull and restart Gunicorn
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-            sudo chown -R www-data:www-data /home/ubuntu/tienda-django/tienda/media/
-            sudo chmod -R 775 /home/ubuntu/tienda-django/tienda/media/
+            sudo chown -R www-data:www-data /home/ubuntu/tienda-django/media/
+            sudo chown -R www-data:www-data /home/ubuntu/tienda-django/static/
+            sudo chmod -R 775 /home/ubuntu/tienda-django/media/
+            sudo chmod -R 775 /home/ubuntu/tienda-django/static/
             sudo systemctl restart gunicorn
           EOF
