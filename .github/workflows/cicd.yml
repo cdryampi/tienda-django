@@ -100,7 +100,6 @@ jobs:
             source /home/ubuntu/venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
-            python manage.py collectstatic --noinput
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn
