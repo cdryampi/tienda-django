@@ -1,0 +1,138 @@
+/* Paleta de colores para la hamburguesería */
+:root {
+    --primary-color: #b33939; /* Rojo profundo (hamburguesa) */
+    --secondary-color: #f39c12; /* Mostaza amarilla (queso) */
+    --accent-color: #27ae60; /* Verde vibrante (fresco) */
+    --background-color: #f4f4f4; /* Beige claro (pan) */
+    --dark-color: #2c3e50; /* Marrón oscuro (carne) */
+    --light-color: #ecf0f1; /* Crema ligera (complemento) */
+    --highlight-color: #e74c3c; /* Rojo brillante (resaltados) */
+}
+
+/* Global */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    color: var(--dark-color);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+header {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    padding: 1em;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin: 0;
+}
+
+/* Navegación */
+nav {
+    background-color: var(--secondary-color);
+    padding: 0.5em;
+}
+
+nav a {
+    color: var(--light-color);
+    text-decoration: none;
+    padding: 0.5em;
+    font-weight: bold;
+}
+
+nav a:hover {
+    background-color: var(--highlight-color);
+    color: var(--light-color);
+}
+
+/* Botones */
+.btn {
+    background-color: var(--accent-color);
+    color: var(--light-color);
+    border: none;
+    padding: 0.75em 1.5em;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--highlight-color);
+    color: var(--light-color);
+}
+
+/* Contenedor principal */
+.container {
+    padding: 2em;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Secciones */
+.section {
+    margin: 2em 0;
+}
+
+.section h2 {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 0.5em;
+}
+
+/* Tarjetas de productos */
+.card {
+    background-color: var(--light-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    padding: 1em;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.card h3 {
+    color: var(--dark-color);
+    margin: 0.5em 0;
+}
+
+.card p {
+    color: var(--dark-color);
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    padding: 1em;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--highlight-color);
+}
+
+/* Estilos adicionales */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lobster', cursive;
+}
+

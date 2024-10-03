@@ -1,31 +1,20 @@
 {% extends "base/base.html" %}
 {% load static %}
-{% block title %}Home - Tienda{% endblock %}
+
+{% block title %}{{ 'productos' }} - Detalles{% endblock %}
 
 {% block content %}
-
-<div id="index-banner" class="parallax-container">
-    <div class="section no-pad-bot">
-      <div class="container">
-        <br><br>
-        <h1 class="header center teal-text text-lighten-2">Bienvenidos a Nuestra Hamburguesería</h1>
-        <div class="row center">
-          <h5 class="header col s12 light">Las mejores hamburguesas al mejor precio</h5>
+<div class="container">
+    <nav class="breadcrumb-nav red px-2">
+        <div class="nav-wrapper">
+            <div class="col s12">
+                <a href="/" class="breadcrumb">Inicio</a>
+                <span class="breadcrumb">productos</span>
+            </div>
         </div>
-        <div class="row center">
-          <a href="#" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Haz tu pedido</a>
-        </div>
-        <br><br>
-      </div>
-    </div>
-    <div class="parallax"><img src="{% static 'images/sample/parallax.jpg' %}" alt="Hamburguesería parallax"></div>
-</div>
-
-<!-- Productos destacados -->
-<div class="container" id="productos">
-    <h2 class="center-align">Nuestros Productos</h2>
-    <div class="row">
-        <!-- Productos for -->
+    </nav>
+    <div class="row py-5">
+        <!-- Imagen del producto -->
         {% for product in products  %}
             <div class="col s12 m6 l4">
                 <div class="card hoverable">
@@ -65,8 +54,8 @@
             </div>
         {% endfor %}
 
-
     </div>
-</div>
 
+
+</div>
 {% endblock %}

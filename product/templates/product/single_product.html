@@ -1,0 +1,138 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ producto.nombre }} - Detalles{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumb-nav red px-2">
+        <div class="nav-wrapper">
+            <div class="col s12">
+                <a href="/" class="breadcrumb">Inicio</a>
+                <a href="/productos" class="breadcrumb">Productos</a>
+                <span class="breadcrumb">{{ producto.nombre }}</span>
+            </div>
+        </div>
+    </nav>
+    <div class="row py-5">
+        <!-- Imagen del producto -->
+        <div class="col s12 m6">
+            <div class="card">
+                <div class="card-image">
+                    <img src="{% static producto.imagen %}" alt="{{ producto.nombre }}" class="responsive-img">
+                    <span class="card-title">{{ producto.nombre }}</span>
+                </div>
+                <div class="card-content">
+                    <h5 class="red-text">${{ producto.precio }}</h5>
+                    <p>{{ producto.descripcion }}</p>
+                </div>
+                <div class="card-action">
+                    <!-- Botón de añadir al carrito -->
+                    <a href="#" class="btn waves-effect waves-light red">
+                        <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de interacción -->
+        <div class="col s12 m6">
+            <!-- Botón "Me gusta" con contador -->
+            <div class="section">
+                <a class="btn-floating btn-large waves-effect waves-light red">
+                    <i class="material-icons">favorite</i>
+                </a>
+                <span class="likes-counter">25 Me gusta</span>
+            </div>
+
+            <!-- Sección de comentarios -->
+            <div class="section">
+                <h5>Comentarios</h5>
+                <ul class="collection">
+                    <li class="collection-item avatar">
+                        <img src="{% static 'images/sample/avatar1.jpg' %}" alt="" class="circle">
+                        <span class="title">Usuario 1</span>
+                        <p>¡Me encantó esta hamburguesa! Muy jugosa y deliciosa.</p>
+                        <a href="#" class="secondary-content"><i class="material-icons">thumb_up</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <img src="{% static 'images/sample/avatar2.jpg' %}" alt="" class="circle">
+                        <span class="title">Usuario 2</span>
+                        <p>Buena relación calidad-precio. Volveré a comprar.</p>
+                        <a href="#" class="secondary-content"><i class="material-icons">thumb_up</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <img src="{% static 'images/sample/avatar3.jpg' %}" alt="" class="circle">
+                        <span class="title">Usuario 3</span>
+                        <p>No estaba tan buena como esperaba, pero estuvo bien.</p>
+                        <a href="#" class="secondary-content"><i class="material-icons">thumb_up</i></a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Formulario para añadir un nuevo comentario -->
+            <div class="section">
+                <h5>Deja tu comentario</h5>
+                <form action="#" method="POST">
+                    <div class="input-field">
+                        <textarea id="comentario" class="materialize-textarea" required></textarea>
+                        <label for="comentario">Escribe tu comentario</label>
+                    </div>
+                    <button class="btn waves-effect waves-light red" type="submit">
+                        Enviar <i class="material-icons right">send</i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos relacionados -->
+    <div class="section">
+        <h4>Productos relacionados</h4>
+        <div class="row">
+            {% for product in productos_relacionados  %}
+                {% if product.nombre != producto.nombre %}
+                    <div class="col s12 m6 l4">
+                        <div class="card hoverable">
+                            <div class="card-image">
+                                <!-- Preloader -->
+                                <div class="preloader-wrapper small active" id="{{ product.preloader_id}}">
+                                    <div class="spinner-layer spinner-red-only">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div>
+                                        <div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div>
+                                        <div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Imagen diferida con lazy loading -->
+                                <img data-src="{% static product.imagen %}" alt="{{ product.titulo }}" class="lazy" data-id="{{ forloop.counter }}" style="display:none;">
+                                <span class="card-title">{{ product.nombre }}</span>
+                                <a href="{{ product.url }}" class="btn-floating halfway-fab waves-effect waves-light red">
+                                    <i class="material-icons">add</i>
+                                </a>
+                                <span class="price-tag right red-text">${{ product.precio }}</span>
+                            </div>
+                            <div class="card-content product-card">
+                                <p>{{ product.descripcion }}</p>
+                                <div class="card-action">
+                                    <!-- Botón de añadir al carrito -->
+                                    <a href="#" class="btn waves-effect waves-light red">
+                                        <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                {% endif %}
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

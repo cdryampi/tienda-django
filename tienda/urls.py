@@ -20,8 +20,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include('core.urls')),
+    path('productos/', include('product.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 # Siempre servir archivos estáticos, tanto en desarrollo como en producción

@@ -1,8 +1,8 @@
     <nav class="white">
         <div class="nav-wrapper container">
-            <a href="#" class="brand-logo">Tienda</a>
+            <a href="{% url 'core:home'%}" class="brand-logo">Tienda</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="#productos">Productos</a></li>
+                <li><a href="{% url 'product:product_list'%}">Productos</a></li>
                 <li><a href="#contacto">Contacto</a></li>
             </ul>
         </div>
