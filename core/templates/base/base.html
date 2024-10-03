@@ -45,6 +45,45 @@
         var instances = M.Parallax.init(elems);
       });
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let lazyImages = document.querySelectorAll('.lazy');  // Selecciona todas las imágenes con clase "lazy"
+
+    let lazyLoad = function(entries, observer) {
+        entries.forEach(entry => {
+          console.log(entry)
+            if (!entry.isIntersecting) {
+                let img = entry.target;  // La imagen que está entrando en vista
+                let preloader = document.getElementById('preloader-' + img.dataset.id);  // Obtener el preloader correspondiente
+                
+                // Cargar la imagen
+                img.src = img.getAttribute('data-src');
+                img.style.display = 'block';  // Mostrar la imagen
+                img.classList.remove('lazy');  // Remover la clase lazy
+
+                // Ocultar el preloader cuando la imagen esté cargada
+                img.onload = () => {
+                    preloader.style.display = 'none';  // Ocultar el preloader
+                };
+
+                observer.unobserve(img);  // Dejar de observar esta imagen una vez cargada
+            }
+        });
+    };
+
+    let observer = new IntersectionObserver(lazyLoad, {
+        rootMargin: '200px 0px',  // Cargar las imágenes cuando están a 100px del viewport
+        threshold: 0.1  // Cargar cuando al menos el 10% de la imagen sea visible
+    });
+
+    // Observar cada imagen lazy
+    lazyImages.forEach(img => {
+        observer.observe(img);
+    });
+});
+</script>
+
+
 
 </body>
 </html>
