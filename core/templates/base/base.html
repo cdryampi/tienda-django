@@ -9,32 +9,26 @@
     {% load static %}
     
     <!-- Normalize CSS -->
-    <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'css/normalize.css' %}"> {% endcomment %}
     
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="{% static 'materialize/css/materialize.min.css' %}">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Material Icons CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 </head>
 <body>
     <!-- Navbar -->
-    <nav>
-        <div class="nav-wrapper">
-            <a href="#" class="brand-logo">Tienda</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+    {% include "base/navbar.html" %}
 
     <!-- Main content block -->
-    <div class="container">
+    <div class="container-full">
         {% block content %}{% endblock %}
     </div>
-
+    {% include "base/footer.html" %}
     <!-- Materialize JS -->
     <script src="{% static 'materialize/js/materialize.min.js' %}"></script>
 
@@ -44,5 +38,13 @@
         M.AutoInit();  // Inicializa automáticamente todos los componentes de Materialize
       });
     </script>
+    <!-- Inicialización del parallax -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.parallax');
+        var instances = M.Parallax.init(elems);
+      });
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,22 @@
+.white{
+    background-color: white !important;
+}
+nav ul a, nav .brand-logo {
+    color: #444 !important;
+}
+.text-white{
+    color: white !important;
+}
+/* Hacer que las tarjetas de los productos tengan el mismo tamaño */
+.product-card {
+    min-height: 150px;
+}
+
+/* Posicionar el precio a la derecha, alineado con el título */
+.price-tag {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}

@@ -1,9 +1,85 @@
 <!-- core/templates/core/home.html -->
 {% extends "base/base.html" %}
-
+{% load static %}
 {% block title %}Home - Tienda{% endblock %}
 
 {% block content %}
-    <h1 class="center-align">Welcome to Tienda!</h1>
-    <a class="waves-effect waves-light btn">Get Started</a>
+
+<div id="index-banner" class="parallax-container">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <br><br>
+        <h1 class="header center teal-text text-lighten-2">Bienvenidos a Nuestra Hamburguesería</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Las mejores hamburguesas al mejor precio</h5>
+        </div>
+        <div class="row center">
+          <a href="#" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Haz tu pedido</a>
+        </div>
+        <br><br>
+      </div>
+    </div>
+    <div class="parallax"><img src="{% static 'images/sample/parallax.jpg' %}" alt="Hamburguesería parallax"></div>
+</div>
+
+<!-- Productos destacados -->
+<div class="container" id="productos">
+    <h2 class="center-align">Nuestros Productos</h2>
+    <div class="row">
+        <!-- Producto 1 -->
+        <div class="col s12 m6 l4">
+            <div class="card hoverable">
+                <div class="card-image">
+                    <img src="{% static 'images/sample/burguer1.jpg' %}" alt="Hamburguesa Clásica">
+                    <span class="card-title">Hamburguesa Clásica</span>
+                    <a class="btn-floating halfway-fab waves-effect waves-light red">
+                        <i class="material-icons">add</i>
+                    </a>
+                    <!-- Precio alineado a la derecha -->
+                    <span class="price-tag right red-text">$8.99</span>
+                </div>
+                <div class="card-content product-card">
+                    <p>Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Producto 2 -->
+        <div class="col s12 m6 l4">
+            <div class="card hoverable">
+                <div class="card-image">
+                    <img src="{% static 'images/sample/burguer2.jpg' %}" alt="Hamburguesa BBQ">
+                    <span class="card-title">Hamburguesa BBQ</span>
+                    <a class="btn-floating halfway-fab waves-effect waves-light red">
+                        <i class="material-icons">add</i>
+                    </a>
+                    <!-- Precio alineado a la derecha -->
+                    <span class="price-tag right red-text">$9.99</span>
+                </div>
+                <div class="card-content product-card">
+                    <p>Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Producto 3 -->
+        <div class="col s12 m6 l4">
+            <div class="card hoverable">
+                <div class="card-image">
+                    <img src="{% static 'images/sample/burguer3.jpg' %}" alt="Hamburguesa Vegana">
+                    <span class="card-title">Hamburguesa Vegana</span>
+                    <a class="btn-floating halfway-fab waves-effect waves-light red">
+                        <i class="material-icons">add</i>
+                    </a>
+                    <!-- Precio alineado a la derecha -->
+                    <span class="price-tag right red-text">$7.99</span>
+                </div>
+                <div class="card-content product-card">
+                    <p>Una opción saludable y deliciosa con un medallón de garbanzos, acompañado de lechuga, tomate y aguacate.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
