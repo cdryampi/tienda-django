@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'core',
     'product',
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,11 +78,14 @@ WSGI_APPLICATION = 'tienda.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'tienda',  # Nombre de la base de datos
+        'USER': 'tienda',  # Usuario de la base de datos
+        'PASSWORD': 'thos',  # Contraseña del usuario
+        'HOST': 'localhost',  # Servidor donde está la base de datos
+        'PORT': '5432',  # Puerto de PostgreSQL (puerto por defecto)
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
