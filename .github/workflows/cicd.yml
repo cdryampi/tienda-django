@@ -127,7 +127,7 @@ jobs:
             sudo chown -R www-data:www-data /home/ubuntu/tienda-django/staticfiles/
             sudo chmod -R 775 /home/ubuntu/tienda-django/media/
             sudo chmod -R 775 /home/ubuntu/tienda-django/staticfiles/
-            sudo chmod +x /home/ubuntu/tienda-django/script/reiniciar.sh
-            cd /home/ubuntu/tienda-django/script
+            sudo chmod +x /home/ubuntu/tienda-django/tienda/script/reiniciar.sh
+            cd /home/ubuntu/tienda-django/tienda/script
             ./reiniciar.sh
           EOF
