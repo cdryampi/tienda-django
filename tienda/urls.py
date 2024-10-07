@@ -22,7 +22,8 @@ from django.urls import path, include
 urlpatterns = [
     path('', include('core.urls')),
     path('productos/', include('product.urls')),
-    path('admin/', admin.site.urls),
+    path('secure_admin/', admin.site.urls, name='admin'),
+    path('accounts/', include('accounts.urls')),
 ]
 
 # Siempre servir archivos estáticos, tanto en desarrollo como en producción

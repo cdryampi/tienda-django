@@ -1,0 +1,57 @@
+{% extends "base/base.html" %}
+{% load socialaccount %}
+{% load form_tags %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col s12 m6 offset-m3">
+            <h2 class="center-align">Regístrate</h2>
+            <form method="post" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                
+                <!-- Campo de Email -->
+                <div class="input-field">
+                    <i class="material-icons prefix">email</i>
+                    {{ form.email.label_tag }}
+                    {{ form.email|add_class:"validate" }}
+                    <span class="helper-text" data-error="Ingrese un correo electrónico válido"></span>
+                </div>
+
+                <!-- Campo de Nombre de usuario -->
+                <div class="input-field">
+                    <i class="material-icons prefix">account_circle</i>
+                    {{ form.username.label_tag }}
+                    {{ form.username|add_class:"validate" }}
+                    <span class="helper-text" data-error="Ingrese un nombre de usuario válido"></span>
+                </div>
+
+                <!-- Campo de Contraseña -->
+                <div class="input-field">
+                    <i class="material-icons prefix">lock</i>
+                    {{ form.password1.label_tag }}
+                    {{ form.password1|add_class:"validate" }}
+                    <span class="helper-text" data-error="Contraseña inválida"></span>
+                </div>
+
+                <!-- Campo de Confirmar Contraseña -->
+                <div class="input-field">
+                    <i class="material-icons prefix">lock</i>
+                    {{ form.password2.label_tag }}
+                    {{ form.password2|add_class:"validate" }}
+                    <span class="helper-text" data-error="Las contraseñas no coinciden"></span>
+                </div>
+
+                <!-- Botón de registro -->
+                <div class="center-align">
+                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">Registrarse</button>
+                </div>
+            </form>
+
+            <!-- Enlace para iniciar sesión si ya tienes una cuenta -->
+            <p class="center-align">¿Ya tienes una cuenta? <a href="{% url 'account_login' %}">Inicia sesión aquí</a>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

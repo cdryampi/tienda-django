@@ -28,8 +28,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['3.81.43.127', 'localhost', '127.0.0.1']
 
 # Application definition
+SITE_ID = 1
 
 INSTALLED_APPS = [
+    'accounts',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'core',
     'product',
     'jazzmin',
@@ -49,7 +56,58 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+]
+
+
+SOCIALACCOUNT_PROVIDERS = {
+
+   'facebook': {
+        'APP': {
+            'client_id':'9714484e971fdcb669bc59b50aaeabe0',
+            'secret': '7c6f97138fabfec33f38ab322a51c489'
+        },
+        'METHOD': 'oauth2',  # Set to 'js_sdk' to use the Facebook connect SDK
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'picture',
+            'short_name',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v17.0',
+        'GRAPH_API_URL': 'https://graph.facebook.com/v17.0',
+    }
+
+}
+
+
+
+
+SOCIALACCOUNT_FORMS = {
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+    'signup': 'allauth.socialaccount.forms.SignupForm',
+}
+
+
 
 ROOT_URLCONF = 'tienda.urls'
 
@@ -133,3 +191,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permite login con username o email
+ACCOUNT_EMAIL_REQUIRED = True  # El email es requerido
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # El email debe ser verificado para activar la cuenta
+LOGIN_REDIRECT_URL = '/'  # Redirigir después del login
+#facebook

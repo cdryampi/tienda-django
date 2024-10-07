@@ -1,9 +1,43 @@
-    <nav class="white">
-        <div class="nav-wrapper container">
-            <a href="{% url 'core:home'%}" class="brand-logo">Tienda</a>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="{% url 'product:product_list'%}">Productos</a></li>
-                <li><a href="#contacto">Contacto</a></li>
-            </ul>
-        </div>
-    </nav>
+<nav class="white">
+    <div class="nav-wrapper container">
+        <a href="{% url 'core:home' %}" class="brand-logo">Tienda</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="{% url 'product:product_list' %}">Productos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+
+            <!-- Desplegable para login/logout y registro -->
+            <li>
+                <a class="dropdown-trigger" href="#" data-target="dropdown-user">
+                    <i class="material-icons left">account_circle</i> Cuenta <i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Contenido del desplegable -->
+<ul id="dropdown-user" class="dropdown-content">
+    {% if user.is_authenticated %}
+        <li>
+            <a href="{% url 'admin:index' %}">
+                <i class="material-icons left">person</i> Mi perfil
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'account_logout' %}">
+                <i class="material-icons left">exit_to_app</i> Cerrar sesión
+            </a>
+        </li>
+    {% else %}
+        <li>
+            <a href="{% url 'account_login' %}">
+                <i class="material-icons left">login</i> Iniciar sesión
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'account_signup' %}">
+                <i class="material-icons left">person_add</i> Registrarse
+            </a>
+        </li>
+    {% endif %}
+</ul>

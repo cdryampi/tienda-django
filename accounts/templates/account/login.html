@@ -1,0 +1,56 @@
+{% extends "base/base.html" %}
+{% load socialaccount %}
+{% load form_tags %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col s12 m6 offset-m3">
+            <h2 class="center-align">Iniciar sesión</h2>
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                
+                <!-- Campo de Email/Username -->
+                <div class="input-field">
+                    <i class="material-icons prefix">account_circle</i>
+                    {{ form.login.label_tag }}
+                    {{ form.login|add_class:"validate" }}
+                    <span class="helper-text" data-error="Ingrese un nombre de usuario o correo válido"></span>
+                </div>
+
+                <!-- Campo de Contraseña -->
+                <div class="input-field">
+                    <i class="material-icons prefix">lock</i>
+                    {{ form.password.label_tag }}
+                    {{ form.password|add_class:"validate" }}
+                    <span class="helper-text" data-error="Contraseña incorrecta"></span>
+                </div>
+
+                <!-- Recordarme -->
+                <p>
+                    <label>
+                        {{ form.remember }}
+                        <span>Recordarme</span>
+                    </label>
+                </p>
+
+                <!-- Botón de Iniciar Sesión -->
+                <div class="center-align">
+                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">Iniciar sesión</button>
+                </div>
+            </form>
+
+            <p class="center-align">¿No tienes cuenta? <a href="{% url 'account_signup' %}">Regístrate aquí</a>.</p>
+
+            {% comment %} <!-- Inicio de sesión con redes sociales -->
+            <h5 class="center-align">O inicia sesión con:</h5>
+            <div class="center-align">
+                {% providers_media_js %}
+                {% include "socialaccount/snippets/provider_list.html" %}
+            </div> {% endcomment %}
+        </div>
+    </div>
+</div>
+{% endblock %}
