@@ -11,6 +11,12 @@
                     <i class="material-icons left">account_circle</i> Cuenta <i class="material-icons right">arrow_drop_down</i>
                 </a>
             </li>
+            <li>
+                <a class="dropdown-trigger" href="#" data-target="dropdown-languages">
+                    <i class="material-icons left">language</i> Idioma
+                    <i class="material-icons right">arrow_drop_down</i>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -40,4 +46,9 @@
             </a>
         </li>
     {% endif %}
+</ul>
+<!-- Dropdown de idiomas -->
+<ul id="dropdown-languages" class="dropdown-content">
+    <li><a href="/es/"><i class="material-icons left">flag</i> Español</a></li>
+    <li><a href="/en/"><i class="material-icons left">flag</i> English</a></li>
 </ul>

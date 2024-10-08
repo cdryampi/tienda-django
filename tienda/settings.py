@@ -29,17 +29,23 @@ ALLOWED_HOSTS = ['3.81.43.127', 'localhost', '127.0.0.1']
 
 # Application definition
 SITE_ID = 1
+ANONYMOUS_USER_ID = -1
 
 INSTALLED_APPS = [
     'accounts',
+    'widget_tweaks',
+    'django_countries',
     'django.contrib.sites',
     'allauth',
+    'guardian',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'core',
     'product',
     'jazzmin',
+    'imagekit',
+    'multimedia',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,15 +63,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthenticationBackend',
-
+    'django.contrib.auth.backends.ModelBackend', # Needed to login by username in Django admin, regardless of `allauth`
+    'allauth.account.auth_backends.AuthenticationBackend', # `allauth` specific authentication methods, such as login by email
+    'django.contrib.auth.backends.ModelBackend', # Soporta permisos a nivel de modelo
+    'guardian.backends.ObjectPermissionBackend', # Soporta permisos a nivel de objeto
 ]
 
 
@@ -166,13 +171,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
 USE_TZ = True
+
+
+# Lista de idiomas soportados
+LANGUAGES = [
+    ('es', 'Español'),
+    ('en', 'English'),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 # settings.py
 
@@ -186,6 +202,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
 
 # Directorios adicionales donde Django buscará archivos estáticos
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -195,6 +213,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permite login con username o email
 ACCOUNT_EMAIL_REQUIRED = True  # El email es requerido
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # El email debe ser verificado para activar la cuenta
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # El email debe ser verificado para activar la cuenta
 LOGIN_REDIRECT_URL = '/'  # Redirigir después del login
 #facebook
+AUTH_USER_MODEL = 'auth.User'
+ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'

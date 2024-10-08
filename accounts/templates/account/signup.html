@@ -1,51 +1,176 @@
+<!-- signup.html -->
 {% extends "base/base.html" %}
-{% load socialaccount %}
-{% load form_tags %}
-{% block title %}Iniciar sesión{% endblock %}
+{% load widget_tweaks %}
+{% load material_tags %}
+
+{% block title %}Registrarse{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col s12 m6 offset-m3">
-            <h2 class="center-align">Regístrate</h2>
-            <form method="post" action="{% url 'account_signup' %}">
+        <div class="col s12 m8 offset-m2 l6 offset-l3">
+            <h3 class="center-align">Regístrate</h3>
+            <form method="post" action="{% url 'account_signup' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                
-                <!-- Campo de Email -->
+                <!-- Campos estándar -->
                 <div class="input-field">
                     <i class="material-icons prefix">email</i>
-                    {{ form.email.label_tag }}
                     {{ form.email|add_class:"validate" }}
-                    <span class="helper-text" data-error="Ingrese un correo electrónico válido"></span>
+                    <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+                    {% for error in form.email.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
                 </div>
 
-                <!-- Campo de Nombre de usuario -->
                 <div class="input-field">
                     <i class="material-icons prefix">account_circle</i>
-                    {{ form.username.label_tag }}
                     {{ form.username|add_class:"validate" }}
-                    <span class="helper-text" data-error="Ingrese un nombre de usuario válido"></span>
+                    <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
+                    {% for error in form.username.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
                 </div>
 
-                <!-- Campo de Contraseña -->
                 <div class="input-field">
                     <i class="material-icons prefix">lock</i>
-                    {{ form.password1.label_tag }}
                     {{ form.password1|add_class:"validate" }}
-                    <span class="helper-text" data-error="Contraseña inválida"></span>
+                    <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                    {% for error in form.password1.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
                 </div>
 
-                <!-- Campo de Confirmar Contraseña -->
                 <div class="input-field">
-                    <i class="material-icons prefix">lock</i>
-                    {{ form.password2.label_tag }}
+                    <i class="material-icons prefix">lock_outline</i>
                     {{ form.password2|add_class:"validate" }}
-                    <span class="helper-text" data-error="Las contraseñas no coinciden"></span>
+                    <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                    {% for error in form.password2.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
                 </div>
+
+                <!-- Campos adicionales -->
+                <div class="file-field input-field">
+                    <div class="btn teal lighten-1">
+                        <span><i class="material-icons">photo_camera</i></span>
+                        {{ form.foto_perfil }}
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Sube tu foto de perfil">
+                    </div>
+                    {% for error in form.foto_perfil.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">event</i>
+                    {{ form.fecha_nacimiento|add_class:"datepicker" }}
+                    <label for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>
+                    {% for error in form.fecha_nacimiento.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">phone</i>
+                    {{ form.telefono|add_class:"validate" }}
+                    <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                    {% for error in form.telefono.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">location_on</i>
+                    {{ form.direccion|add_class:"validate" }}
+                    <label for="{{ form.direccion.id_for_label }}">Dirección</label>
+                    {% for error in form.direccion.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">location_city</i>
+                    {{ form.ciudad|add_class:"validate" }}
+                    <label for="{{ form.ciudad.id_for_label }}">Ciudad</label>
+                    {% for error in form.ciudad.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">markunread_mailbox</i>
+                    {{ form.codigo_postal|add_class:"validate" }}
+                    <label for="{{ form.codigo_postal.id_for_label }}">Código Postal</label>
+                    {% for error in form.codigo_postal.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">public</i>
+                    {{ form.pais|add_class:"input-field" }}
+                    <label for="{{ form.pais.id_for_label }}">País</label>
+                    {% for error in form.pais.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <!-- Campo gustos_hamburguesas -->
+                <div class="input-field">
+                    <span class="grey-text text-darken-2">Gustos de hamburguesas</span>
+                    <div class="row">
+                        {% for checkbox in form.gustos_hamburguesas %}
+                            <div class="col s12 m6">
+                                <label>
+                                    {{ checkbox.tag }}  <!-- Utilizar el método 'tag' para generar el input completo -->
+                                    <span>{{ checkbox.choice_label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Campo alergias -->
+                <div class="input-field">
+                    <span class="grey-text text-darken-2">Alergias</span>
+                    <div class="row">
+                        {% for checkbox in form.alergias %}
+                            <div class="col s12 m6">
+                                <label>
+                                    {{ checkbox.tag }}  <!-- Utilizar el método 'tag' para generar el input completo -->
+                                    <span>{{ checkbox.choice_label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Campo suscripcion_boletin -->
+                <p>
+                    <label>
+                        {{ form.suscripcion_boletin }}
+                        <span>Suscribirse al boletín</span>
+                    </label>
+                    {% for error in form.suscripcion_boletin.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </p>
+
+                <!-- Mostrar errores no específicos de campos -->
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
 
                 <!-- Botón de registro -->
                 <div class="center-align">
-                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">Registrarse</button>
+                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">
+                        Registrarse
+                        <i class="material-icons right">send</i>
+                    </button>
                 </div>
             </form>
 
@@ -54,4 +179,14 @@
         </div>
     </div>
 </div>
+
+<!-- Inicialización de componentes de Materialize -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {        
+        var elemsSelect = document.querySelectorAll('select');
+        if (elemsSelect) {
+            var instancesSelect = M.FormSelect.init(elemsSelect);
+        }
+    });
+</script>
 {% endblock %}

@@ -31,6 +31,11 @@ This document outlines the server setup for deploying the Django project "Tienda
         libtiff-dev libfreetype6-dev liblcms2-dev libwebp-dev libharfbuzz-dev \
         libfribidi-dev tcl-dev tk-dev postgresql postgresql-contrib
     ```
+    ```bash
+    sudo apt-get update
+    sudo apt-get install gettext
+    ```
+
 
 ### 2. **Set Up PostgreSQL Database**
 - Create a PostgreSQL database and user:
