@@ -6,11 +6,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         hamburguesas = [
-            {'nombre': 'Clásica', 'descripcion': 'Hamburguesa tradicional con ingredientes frescos.'},
-            {'nombre': 'Doble carne', 'descripcion': 'Hamburguesa con doble porción de carne de res.'},
-            {'nombre': 'Vegetariana', 'descripcion': 'Hamburguesa con ingredientes vegetales y sin carne.'},
-            {'nombre': 'Pollo', 'descripcion': 'Hamburguesa con carne de pollo marinada.'},
-            {'nombre': 'Especial de la casa', 'descripcion': 'Nuestra receta secreta con los mejores ingredientes.'},
+            {'nombre': 'clasica', 'descripcion': 'Hamburguesa clasica con doble porción de carne de res.'},
+            {'nombre': 'doble', 'descripcion': 'Hamburguesa con doble porción de carne de res.'},
+            {'nombre': 'vegetariana', 'descripcion': 'Hamburguesa con ingredientes vegetales y sin carne.'},
+            {'nombre': 'pollo', 'descripcion': 'Hamburguesa con carne de pollo marinada.'},
+            {'nombre': 'especial', 'descripcion': 'Nuestra receta secreta con los mejores ingredientes.'},
         ]
 
         for h in hamburguesas:
