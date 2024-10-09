@@ -5,6 +5,7 @@
 # Esto facilita la ejecución de lógica adicional (como establecer preferencias del usuario) sin tener que modificar las vistas directamente.
 
 from django.db.models.signals import post_save
+from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth.models import User, Group
 from .models import UserProfile
@@ -12,6 +13,8 @@ from guardian.shortcuts import assign_perm
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.contrib.auth.signals import user_logged_in
+
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -73,3 +76,7 @@ def set_user_preferences(sender, user, request, **kwargs):
     except UserProfile.DoesNotExist:
         # Si el perfil no existe, no se hace nada
         pass
+
+@receiver(post_migrate)
+def create_cliente_group(sender, **kwargs):
+    Group.objects.get_or_create(name='cliente')
