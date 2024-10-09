@@ -1,8 +1,3 @@
-from django.shortcuts import render
-from allauth.account.views import SignupView, LoginView, LogoutView
-from django.urls import reverse_lazy
-from django.contrib import messages 
-from .models import UserProfile
 # Explicación breve de dispatch():
 # El método dispatch() se encarga de enrutar la solicitud HTTP entrante al método adecuado 
 # (por ejemplo, get(), post(), etc.) según el tipo de solicitud. Es útil para agregar lógica
@@ -13,6 +8,11 @@ from .models import UserProfile
 # Sobrescribirlo permite agregar lógica adicional (como mensajes o redirecciones) justo después
 # de que el formulario sea validado y antes de devolver la respuesta.
 
+from django.shortcuts import render
+from allauth.account.views import SignupView, LoginView, LogoutView
+from django.urls import reverse_lazy
+from django.contrib import messages 
+from .models import UserProfile
 
 # Create your views here.
 class CustomSignupView(SignupView):

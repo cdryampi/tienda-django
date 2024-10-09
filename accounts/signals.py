@@ -47,6 +47,9 @@ def assign_profile_permissions(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def assign_user_permissions(sender, instance, created, **kwargs):
+    if instance.username == 'AnonymousUser':
+        return
+    
     if created:
         # Asignar permisos de ver y cambiar al usuario sobre sí mismo
         assign_perm('auth.view_user', instance, instance)

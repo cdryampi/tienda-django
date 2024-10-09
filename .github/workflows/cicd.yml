@@ -66,9 +66,15 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
         run: |
           python manage.py migrate
-          python manage.py test
+          
+      - name: Create Anonymous User
+        run: python manage.py shell -c "from django.contrib.auth.models import User; User.objects.get_or_create(username='AnonymousUser')"
+  
+      - name: Run tests
+        run: python manage.py test
 
   deploy:
     runs-on: ubuntu-latest
