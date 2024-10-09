@@ -69,7 +69,7 @@ jobs:
 
         run: |
           python manage.py migrate
-          
+
       - name: Create Anonymous User
         run: python manage.py shell -c "from django.contrib.auth.models import User; User.objects.get_or_create(username='AnonymousUser')"
   
@@ -125,6 +125,7 @@ jobs:
             python manage.py compilemessages
             python manage.py migrate
             python manage.py collectstatic --noinput --clear
+            python manage.py create_initial_data
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn
