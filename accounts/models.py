@@ -23,7 +23,7 @@ class UserProfile(models.Model):
         null=True,
         blank=True,
         help_text="Ingresa tu fecha de nacimiento",
-        auto_now=datetime.now()
+        auto_now=datetime.now
     )
     telefono = models.CharField(
         max_length=20,
@@ -82,7 +82,7 @@ class UserProfile(models.Model):
     )
     fecha_registro = models.DateTimeField(
         help_text="Fecha en que te uniste a nosotros",
-        auto_now=datetime.now()
+        auto_now_add=True
     )
 
     def __str__(self):

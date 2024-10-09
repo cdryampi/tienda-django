@@ -215,6 +215,9 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Permite login con username o
 ACCOUNT_EMAIL_REQUIRED = True  # El email es requerido
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # El email debe ser verificado para activar la cuenta
 LOGIN_REDIRECT_URL = '/'  # Redirigir después del login
+LOGOUT_REDIRECT_URL = '/' # Redirigir después del logout
+SIGNUP_REDIRECT_URL = '/' # Redirigir después del signup
 #facebook
 AUTH_USER_MODEL = 'auth.User'
 ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
+

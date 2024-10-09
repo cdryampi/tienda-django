@@ -11,13 +11,16 @@
             <h2 class="center-align">Iniciar sesión</h2>
             <form method="post" action="{% url 'account_login' %}">
                 {% csrf_token %}
-                
+
                 <!-- Campo de Email/Username -->
                 <div class="input-field">
                     <i class="material-icons prefix">account_circle</i>
                     {{ form.login.label_tag }}
                     {{ form.login|add_class:"validate" }}
                     <span class="helper-text" data-error="Ingrese un nombre de usuario o correo válido"></span>
+                    {% if form.login.errors %}
+                        <span class="red-text">{{ form.login.errors|striptags }}</span>
+                    {% endif %}
                 </div>
 
                 <!-- Campo de Contraseña -->
@@ -26,7 +29,17 @@
                     {{ form.password.label_tag }}
                     {{ form.password|add_class:"validate" }}
                     <span class="helper-text" data-error="Contraseña incorrecta"></span>
+                    {% if form.password.errors %}
+                        <span class="red-text">{{ form.password.errors|striptags }}</span>
+                    {% endif %}
                 </div>
+
+                <!-- Mensaje de error general -->
+                {% if form.non_field_errors %}
+                    <div class="card-panel red lighten-2 white-text">
+                        {{ form.non_field_errors|striptags }}
+                    </div>
+                {% endif %}
 
                 <!-- Recordarme -->
                 <p>

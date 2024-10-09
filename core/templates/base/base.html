@@ -81,10 +81,20 @@ document.addEventListener('DOMContentLoaded', function() {
     lazyImages.forEach(img => {
         observer.observe(img);
     });
+
 });
 </script>
 
-
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let mensaje_sistema = document.getElementById("mensaje_sistema");
+        if(mensaje_sistema){
+          setTimeout(() => {
+            mensaje_sistema.style.display = 'none';
+          }, 5000);
+        }
+      });
+    </script>
 
 </body>
 </html>

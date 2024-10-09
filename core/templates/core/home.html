@@ -3,6 +3,14 @@
 {% block title %}Home - Tienda{% endblock %}
 
 {% block content %}
+{% comment %} mensaje temporal {% endcomment %}
+
+
+{% if mensaje_sistema  %}
+<div class="mensaje-exitoso card-panel green lighten-1 white-text" id="mensaje_sistema">
+    <span>{{ mensaje_sistema }}</span>
+</div>
+{% endif %}
 
 <div id="index-banner" class="parallax-container">
     <div class="section no-pad-bot">
@@ -26,12 +34,97 @@
     <h2 class="center-align">Nuestros Productos</h2>
     <div class="row">
         <!-- Productos for -->
-        {% for product in products  %}
+        {% for product in products %}
             <div class="col s12 m6 l4">
                 <div class="card hoverable">
-                    <div class="card-image">
+                    <div class="card-image" style="position: relative;">
+                        <!-- Iconos en la parte superior de la tarjeta -->
+                        {% if user.is_authenticated %}
+                            <div class="card-icons" style="position: absolute; top: 10px; left: 10px; z-index:100">
+                                
+                                <!-- Alergias del usuario almacenadas en la sesión -->
+                                {% with user_alergias=request.session.alergias %}
+                                    {% if product.alergias and user_alergias %}
+                                        {% for alergia in product.alergias %}
+                                            {% if alergia in user_alergias %}
+                                                <i class="material-icons small amber-text text-darken-3" title="Alergia: {{ alergia }}">
+                                                    {% if alergia == 'gluten' %}
+                                                        report
+                                                    {% elif alergia == 'lactosa' %}
+                                                        block
+                                                    {% elif alergia == 'soja' %}
+                                                        medical_services
+                                                    {% elif alergia == 'frutos_secos' %}
+                                                        warning
+                                                    {% elif alergia == 'mariscos' %}
+                                                        no_meals
+                                                    {% elif alergia == 'huevo' %}
+                                                        egg
+                                                    {% elif alergia == 'pescado' %}
+                                                        waves
+                                                    {% elif alergia == 'apio' %}
+                                                        restaurant
+                                                    {% elif alergia == 'mostaza' %}
+                                                        whatshot
+                                                    {% elif alergia == 'sésamo' %}
+                                                        spa
+                                                    {% endif %}
+                                                </i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                                
+                                <!-- Gustos del usuario almacenados en la sesión -->
+                                {% with user_gustos=request.session.gustos_hamburguesas %}
+                                    {% if product.gustos and user_gustos %}
+                                        {% for gusto in product.gustos %}
+                                            {% if gusto in user_gustos %}
+                                                <i class="material-icons small pink-text text-lighten-1" title="Gusto: {{ gusto }}">
+                                                    {% if gusto == 'clasica' %}
+                                                        favorite
+                                                    {% elif gusto == 'doble' %}
+                                                        double_arrow
+                                                    {% elif gusto == 'vegetariana' %}
+                                                        spa
+                                                    {% elif gusto == 'pollo' %}
+                                                        restaurant
+                                                    {% elif gusto == 'especial' %}
+                                                        star
+                                                    {% endif %}
+                                                </i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <!-- Preferencias dietéticas del usuario almacenadas en la sesión -->
+                                {% with user_preferencias=request.session.preferencias_dieteticas %}
+                                    {% if product.preferencias_dieteticas and user_preferencias %}
+                                        {% for preferencia in product.preferencias_dieteticas %}
+                                            {% if preferencia == user_preferencias %}
+                                                <i class="material-icons small green-text text-darken-2" title="Preferencia Dietética: {{ preferencia }}">
+                                                    {% if preferencia == 'vegano' %}
+                                                        grass
+                                                    {% elif preferencia == 'vegetariano' %}
+                                                        eco
+                                                    {% elif preferencia == 'carnivoro' %}
+                                                        set_meal
+                                                    {% elif preferencia == 'pescetariano' %}
+                                                        waves
+                                                    {% elif preferencia == 'sin_restricciones' %}
+                                                        emoji_nature
+                                                    {% endif %}
+                                                </i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        {% endif %}
+
                         <!-- Preloader -->
-                        <div class="preloader-wrapper small active" id="{{ product.preloader_id}}">
+                        <div class="preloader-wrapper small active" id="{{ product.preloader_id }}">
                             <div class="spinner-layer spinner-red-only">
                                 <div class="circle-clipper left">
                                     <div class="circle"></div>
@@ -45,7 +138,7 @@
                             </div>
                         </div>
                         <!-- Imagen diferida con lazy loading -->
-                        <img data-src="{% static product.imagen %}" alt="{{ product.titulo }}" class="lazy" data-id="{{ forloop.counter }}" style="display:none;">
+                        <img data-src="{% static product.imagen %}" alt="{{ product.nombre }}" class="lazy" data-id="{{ forloop.counter }}" style="display:none;">
                         <span class="card-title">{{ product.nombre }}</span>
                         <a href="{{ product.url }}" class="btn-floating halfway-fab waves-effect waves-light red">
                             <i class="material-icons">add</i>
@@ -56,7 +149,7 @@
                         <p>{{ product.descripcion }}</p>
                         <div class="card-action">
                             <!-- Botón de añadir al carrito -->
-                            <a href="#" class="btn waves-effect waves-light red">
+                            <a href="#" class="btn waves-effect waves-light teal">
                                 <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
                             </a>
                         </div>
@@ -64,8 +157,6 @@
                 </div>
             </div>
         {% endfor %}
-
-
     </div>
 </div>
 
