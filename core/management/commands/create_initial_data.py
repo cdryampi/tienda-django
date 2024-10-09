@@ -14,7 +14,7 @@ class Command(BaseCommand):
         ]
 
         for h in hamburguesas:
-            Hamburguesa.objects.get_or_create(nombre=h['nombre'], defaults={'descripcion': h['descripcion']})
+            Hamburguesa.objects.get_or_create(nombre=h['nombre'])
 
         alergias = [
             'Gluten', 'Lactosa', 'Soja', 'Frutos secos', 'Mariscos', 
