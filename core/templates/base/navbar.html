@@ -7,10 +7,19 @@
 
             <!-- Desplegable para login/logout y registro -->
             <li>
-                <a class="dropdown-trigger" href="#" data-target="dropdown-user">
-                    <i class="material-icons left">account_circle</i> Cuenta <i class="material-icons right">arrow_drop_down</i>
+                <a class="dropdown-trigger valign-wrapper" href="#" data-target="dropdown-user">
+                    <!-- Mostrar Foto de Perfil si Existe -->
+                    {% if request.session.foto_perfil %}
+                        <img src="{{ request.session.foto_perfil }}" alt="{{ request.session.username }}" class="responsive-img circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                    {% else %}
+                        <!-- Mostrar Ícono si No Hay Foto de Perfil -->
+                        <i class="material-icons left" style="font-size: 36px;">account_circle</i>
+                    {% endif %}
+                    <span>Cuenta</span>
+                    <i class="material-icons right">arrow_drop_down</i>
                 </a>
             </li>
+
             <li>
                 <a class="dropdown-trigger" href="#" data-target="dropdown-languages">
                     <i class="material-icons left">language</i> Idioma
@@ -25,8 +34,13 @@
 <ul id="dropdown-user" class="dropdown-content">
     {% if user.is_authenticated %}
         <li>
-            <a href="{% url 'admin:index' %}">
-                <i class="material-icons left">person</i> Mi perfil
+            <a href="{% url 'admin:index' %}" class="valign-wrapper">
+                {% if request.session.foto_perfil %}
+                    <img src="{{ request.session.foto_perfil }}" alt="{{ request.session.username }}" class="responsive-img circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                {% else %}
+                    <i class="material-icons left" style="font-size: 36px; margin-right: 10px;">person</i>
+                {% endif %}
+                <span>Mi perfil</span>
             </a>
         </li>
         <li>

@@ -6,9 +6,11 @@
 {% comment %} mensaje temporal {% endcomment %}
 
 
-{% if mensaje_sistema  %}
+{% if messages  %}
 <div class="mensaje-exitoso card-panel green lighten-1 white-text" id="mensaje_sistema">
-    <span>{{ mensaje_sistema }}</span>
+    {% for message in messages %}
+        <span>{{ message }}</span>
+    {% endfor %}
 </div>
 {% endif %}
 

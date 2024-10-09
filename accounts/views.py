@@ -8,6 +8,8 @@
 # Sobrescribirlo permite agregar lógica adicional (como mensajes o redirecciones) justo después
 # de que el formulario sea validado y antes de devolver la respuesta.
 
+# Tenemos que gastar los mensajes del sistema del allauth para que se sobreescriban los mios, aunque el del allauth esta mejor hecho y con multi-idioma.
+
 from django.shortcuts import render
 from allauth.account.views import SignupView, LoginView, LogoutView
 from django.urls import reverse_lazy
@@ -24,6 +26,9 @@ class CustomSignupView(SignupView):
         return response
 
     def dispatch(self, request, *args, **kwargs):
+        storage = messages.get_messages(request)
+        for _ in storage:
+            pass  # Consumir todos los mensajes para limpiarlos
         messages.success(
             self.request,
             "Registro de usuario éxitoso. ¡Ya te puedes loginar en la web!"
@@ -46,9 +51,9 @@ class CustomLoginView(LoginView):
             self.request.session['alergias'] = list(profile.alergias.values_list('nombre', flat=True))
             self.request.session['gustos_hamburguesas'] = list(profile.gustos_hamburguesas.values_list('nombre', flat=True))
             self.request.session['preferencias_dieteticas'] = profile.pais.name if profile.pais else ''
+            if profile.foto_perfil:
+                self.request.session['foto_perfil'] = profile.foto_perfil.url
 
-            # Mensaje de bienvenida con el nombre del usuario
-            messages.success(self.request, f"Bienvenido de nuevo, {user.username}!")
 
 
         except UserProfile.DoesNotExist:
@@ -58,23 +63,24 @@ class CustomLoginView(LoginView):
 
 
     def dispatch(self, request, *args, **kwargs):
-        messages.success(
-            self.request,
-            "Inicio de sessión con éxito. ¡Ya puedes entrar al admin!"
-        )
-        return super().dispatch(request, *args, **kwargs)
+            storage = messages.get_messages(request)
+            for _ in storage:
+                pass  # Consumir todos los mensajes para limpiarlos
+            messages.success(
+                self.request,
+                "Inicio de sessión con éxito. ¡Ya puedes entrar al admin!"
+            )
+            return super().dispatch(request, *args, **kwargs)
 
 class CustomLogoutView(LogoutView):
     success_url = reverse_lazy('core:home')
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        return response
-    
     def dispatch(self, request, *args, **kwargs):
+        storage = messages.get_messages(request)
+        for _ in storage:
+            pass  # Consumir todos los mensajes para limpiarlos
         messages.success(
-            self.request,
+            request,
             "Haz salido del sistema. Te esperamos de vuelta"
         )
         return super().dispatch(request, *args, **kwargs)
