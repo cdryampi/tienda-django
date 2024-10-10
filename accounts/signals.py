@@ -138,6 +138,19 @@ def before_social_login(request, sociallogin, **kwargs):
             # Si el usuario no existe, continúa el registro normal
             pass
 
+@receiver(social_account_added)
+def create_profile_and_assign_permissions(request, sociallogin, **kwargs):
+    user = sociallogin.user
+    if not user.pk:
+        user.save()
+
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    # Asignar permisos al usuario sobre su perfil
+    assign_perm('view_userprofile', user, profile)
+    assign_perm('change_userprofile', user, profile)
+
+
 # Signal para actualizar el perfil cuando la cuenta social es actualizada
 @receiver(social_account_updated)
 def after_social_account_updated(request, sociallogin, **kwargs):
