@@ -13,24 +13,23 @@ def create_user_profile(sender, instance, created, **kwargs):
         return  # No hacer nada para el usuario anónimo
 
     if created:
-        # Crear perfil de usuario
-        profile, _ = UserProfile.objects.get_or_create(user=instance)
+        # Crear el perfil si no existe
+        user_profile, _ = UserProfile.objects.get_or_create(user=instance)
 
         # Asignar grupo 'cliente'
-        grupo, _ = Group.objects.get_or_create(name='cliente')
-        instance.groups.add(grupo)
+        grupo = Group.objects.filter(name='cliente').first()
+        if grupo:
+            instance.groups.add(grupo)
 
-        # Asignar permisos de ver y cambiar el perfil al usuario
-        assign_perm('change_userprofile', instance, profile)
-        assign_perm('view_userprofile', instance, profile)
-
-        # Actualizar el campo 'is_staff' (opcional)
+        # Actualizar el campo 'is_staff'
         instance.is_staff = True
         instance.save(update_fields=['is_staff'])
 
-        # Asignar permisos sobre el propio usuario
+        # Asignar permisos
         assign_perm('auth.view_user', instance, instance)
         assign_perm('auth.change_user', instance, instance)
+        assign_perm('change_userprofile', instance, user_profile)
+        assign_perm('view_userprofile', instance, user_profile)
 
 # Eliminar imagen de perfil cuando se elimina un perfil de usuario
 @receiver(post_delete, sender=UserProfile)
