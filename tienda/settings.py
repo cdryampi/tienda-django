@@ -223,3 +223,4 @@ ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 ACCOUNT_ADAPTER = 'accounts.adapters.custom_account_adapter.CustomAccountAdapter'
+ACCOUNT_ALLOW_REGISTRATION = False

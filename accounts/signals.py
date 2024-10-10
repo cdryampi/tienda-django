@@ -19,6 +19,7 @@ from allauth.socialaccount.signals import pre_social_login
 from allauth.socialaccount.signals import social_account_added
 from allauth.socialaccount.signals import social_account_updated
 from allauth.socialaccount.signals import social_account_removed
+from allauth.account.utils import perform_login
 
 from django.shortcuts import redirect
 
@@ -93,52 +94,48 @@ def create_cliente_group(sender, **kwargs):
 
 # Signal para crear el perfil del usuario después del inicio de sesión social exitoso
 @receiver(social_account_added)
-def create_or_update_profile_after_social_login(request, sociallogin, **kwargs):
+def create_profile_after_social_login(request, sociallogin, **kwargs):
     user = sociallogin.user
 
-    # Asegúrate de que el usuario está guardado antes de crear o actualizar el perfil
     if not user.pk:
-        user.save()
+        user.save()  # Guarda el usuario si aún no está guardado
 
     # Crea o actualiza el perfil del usuario
     profile, created = UserProfile.objects.get_or_create(user=user)
 
-    # Datos adicionales de Facebook
+    # Rellena el perfil con datos adicionales si están disponibles
     extra_data = sociallogin.account.extra_data
     if 'first_name' in extra_data:
         user.first_name = extra_data['first_name']
     if 'last_name' in extra_data:
         user.last_name = extra_data['last_name']
-    if 'picture' in extra_data:
-        # Guardar la URL de la foto de perfil
+    if 'picture' in extra_data and 'data' in extra_data['picture']:
         profile.foto_perfil_url = extra_data['picture']['data']['url']
 
-    # Guarda los cambios realizados
     user.save()
     profile.save()
 
-    # Mensaje para indicar al usuario que la cuenta ha sido conectada con éxito
-    messages.success(request, "Has conectado exitosamente tu cuenta de Facebook.")
 
 @receiver(pre_social_login)
 def before_social_login(request, sociallogin, **kwargs):
-    # Obtener el email del usuario que intenta loguearse mediante Facebook
+    # Extrae el correo del perfil social
     extra_data = sociallogin.account.extra_data
     email = extra_data.get('email')
 
     if email:
         try:
-            # Verifica si ya existe un usuario con ese email
+            # Verifica si existe un usuario con ese correo
             user = User.objects.get(email=email)
-            
-            # Conecta el usuario existente con la cuenta social
-            sociallogin.connect(request, user)
 
-            # Redirigir al usuario a la página de inicio
+            # Conecta el usuario existente con la cuenta social
+            sociallogin.state['process'] = 'connect'
+            perform_login(request, user, email_verification='optional')
+
+            # Redirige al usuario a la página de inicio
             return redirect('core:home')
 
         except User.DoesNotExist:
-            # Si el usuario no existe, procede con el registro normal
+            # Si el usuario no existe, continúa el registro normal
             pass
 
 # Signal para actualizar el perfil cuando la cuenta social es actualizada
