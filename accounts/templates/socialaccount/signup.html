@@ -2,11 +2,16 @@
 {% extends "base/base.html" %}
 {% load widget_tweaks %}
 {% load material_tags %}
-
+{% load i18n %}
+{% load allauth %}
 {% block title %}Registrarse{% endblock %}
 
 {% block content %}
 <div class="container">
+    {% element p %}
+        {% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
+        {{site_name}}. As a final step, please complete the following form:{% endblocktrans %}
+    {% endelement %}
     <div class="row">
         <div class="col s12 m8 offset-m2 l6 offset-l3">
             <h3 class="center-align">Regístrate</h3>
@@ -27,38 +32,6 @@
                     {{ form.username|add_class:"validate" }}
                     <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
                     {% for error in form.username.errors %}
-                        <span class="helper-text red-text">{{ error }}</span>
-                    {% endfor %}
-                </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">lock</i>
-                    {{ form.password1|add_class:"validate" }}
-                    <label for="{{ form.password1.id_for_label }}">Contraseña</label>
-                    {% for error in form.password1.errors %}
-                        <span class="helper-text red-text">{{ error }}</span>
-                    {% endfor %}
-                </div>
-
-                <div class="input-field">
-                    <i class="material-icons prefix">lock_outline</i>
-                    {{ form.password2|add_class:"validate" }}
-                    <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
-                    {% for error in form.password2.errors %}
-                        <span class="helper-text red-text">{{ error }}</span>
-                    {% endfor %}
-                </div>
-
-                <!-- Campos adicionales -->
-                <div class="file-field input-field">
-                    <div class="btn teal lighten-1">
-                        <span><i class="material-icons">photo_camera</i></span>
-                        {{ form.foto_perfil }}
-                    </div>
-                    <div class="file-path-wrapper">
-                        <input class="file-path validate pl-3" type="text" placeholder="Sube tu foto de perfil">
-                    </div>
-                    {% for error in form.foto_perfil.errors %}
                         <span class="helper-text red-text">{{ error }}</span>
                     {% endfor %}
                 </div>
@@ -175,7 +148,7 @@
             </form>
 
             <!-- Enlace para iniciar sesión si ya tienes una cuenta -->
-            <p class="center-align">¿Ya tienes una cuenta? <a href="{% url 'account_login' %}">Inicia sesión aquí</a>.</p>
+            <p class="center-align">¿Ya tienes una cuenta? <a href="{% url 'socialaccount_signup' %}">Inicia sesión aquí</a>.</p>
         </div>
     </div>
 </div>
