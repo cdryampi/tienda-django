@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--9wyz@2^n^+u7s(+_9^^=_4b)-)hxn-!44m54mfn_og#dpg0a6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['52.90.107.43', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['gaudeix.info', 'localhost', '127.0.0.1']
 
 # Application definition
 SITE_ID = 1
@@ -69,7 +69,6 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend', # Needed to login by username in Django admin, regardless of `allauth`
     'allauth.account.auth_backends.AuthenticationBackend', # `allauth` specific authentication methods, such as login by email
-    'django.contrib.auth.backends.ModelBackend', # Soporta permisos a nivel de modelo
     'guardian.backends.ObjectPermissionBackend', # Soporta permisos a nivel de objeto
 ]
 
@@ -78,7 +77,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
    'facebook': {
         'APP': {
-            'client_id':'9714484e971fdcb669bc59b50aaeabe0',
+            'client_id':'561825706412628',
             'secret': '7c6f97138fabfec33f38ab322a51c489'
         },
         'METHOD': 'oauth2',  # Set to 'js_sdk' to use the Facebook connect SDK
@@ -119,7 +118,7 @@ ROOT_URLCONF = 'tienda.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

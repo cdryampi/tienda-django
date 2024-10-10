@@ -16,6 +16,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages 
 from .models import UserProfile
 
+
 # Create your views here.
 class CustomSignupView(SignupView):
     success_url = reverse_lazy('core:home')
@@ -35,6 +36,7 @@ class CustomSignupView(SignupView):
         )
         return super().dispatch(request, *args, **kwargs)
 
+
 class CustomLoginView(LoginView):
     success_url = reverse_lazy('core:home')
 
@@ -43,6 +45,13 @@ class CustomLoginView(LoginView):
         # print(self.request.POST.get('login'))
         # print(self.request.POST.get('password'))
         # Establecer preferencias del usuario en la sesión
+        # Agregar mensaje de éxito después de la validación exitosa del formulario
+        messages.success(
+            self.request,
+            "Inicio de sesión con éxito. ¡Ya puedes entrar al admin!"
+        )
+
+
         user = self.request.user
         try:
             profile = UserProfile.objects.get(user=user)
@@ -63,14 +72,16 @@ class CustomLoginView(LoginView):
 
 
     def dispatch(self, request, *args, **kwargs):
-            storage = messages.get_messages(request)
-            for _ in storage:
-                pass  # Consumir todos los mensajes para limpiarlos
-            messages.success(
-                self.request,
-                "Inicio de sessión con éxito. ¡Ya puedes entrar al admin!"
-            )
-            return super().dispatch(request, *args, **kwargs)
+        # Limpiar mensajes anteriores para evitar duplicados o mensajes no deseados
+        storage = messages.get_messages(request)
+        for _ in storage:
+            pass  # Consumir todos los mensajes para limpiarlos
+        return super().dispatch(request, *args, **kwargs)
+
+
+
+
+
 
 class CustomLogoutView(LogoutView):
     success_url = reverse_lazy('core:home')

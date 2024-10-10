@@ -65,7 +65,7 @@
 
                 <div class="input-field">
                     <i class="material-icons prefix">event</i>
-                    {{ form.fecha_nacimiento|add_class:"datepicker" }}
+                    {{ form.fecha_nacimiento}}
                     <label for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>
                     {% for error in form.fecha_nacimiento.errors %}
                         <span class="helper-text red-text">{{ error }}</span>
@@ -124,7 +124,7 @@
                         {% for checkbox in form.gustos_hamburguesas %}
                             <div class="col s12 m6">
                                 <label>
-                                    {{ checkbox.tag }}  <!-- Utilizar el método 'tag' para generar el input completo -->
+                                    {{ checkbox.tag }}
                                     <span>{{ checkbox.choice_label }}</span>
                                 </label>
                             </div>
@@ -139,7 +139,7 @@
                         {% for checkbox in form.alergias %}
                             <div class="col s12 m6">
                                 <label>
-                                    {{ checkbox.tag }}  <!-- Utilizar el método 'tag' para generar el input completo -->
+                                    {{ checkbox.tag }}
                                     <span>{{ checkbox.choice_label }}</span>
                                 </label>
                             </div>

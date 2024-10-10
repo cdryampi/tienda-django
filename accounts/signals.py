@@ -12,8 +12,13 @@ from .models import UserProfile
 from guardian.shortcuts import assign_perm
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.contrib.auth.signals import user_logged_in
+from django.contrib import messages 
 
+from django.contrib.auth.signals import user_logged_in
+from allauth.socialaccount.signals import pre_social_login
+from allauth.socialaccount.signals import social_account_added
+from allauth.socialaccount.signals import social_account_updated
+from allauth.socialaccount.signals import social_account_removed
 
 
 @receiver(post_save, sender=User)
@@ -80,3 +85,49 @@ def set_user_preferences(sender, user, request, **kwargs):
 @receiver(post_migrate)
 def create_cliente_group(sender, **kwargs):
     Group.objects.get_or_create(name='cliente')
+
+
+##login con facebook
+
+@receiver(pre_social_login)
+def create_profile_for_social_user(request, sociallogin, **kwargs):
+    if not sociallogin.is_existing:
+        user = sociallogin.user
+        profile, created = UserProfile.objects.get_or_create(user=user)
+
+        # Datos adicionales de Facebook
+        extra_data = sociallogin.account.extra_data
+        if 'first_name' in extra_data:
+            user.first_name = extra_data['first_name']
+        if 'last_name' in extra_data:
+            user.last_name = extra_data['last_name']
+        if 'picture' in extra_data:
+            # Guardar la URL de la foto de perfil
+            profile.foto_perfil_url = extra_data['picture']['data']['url']
+        
+        user.save()
+        profile.save()
+
+@receiver(pre_social_login)
+def before_social_login(request, sociallogin, **kwargs):
+    # Realiza acciones antes de que el login se procese completamente
+    profile_data = sociallogin.account.extra_data  # Datos adicionales del perfil del proveedor social
+    if profile_data.get('email'):
+        print(f"Email del usuario autenticado: {profile_data['email']}")
+    # Lógica personalizada: Podrías verificar si hay un usuario con este correo
+
+@receiver(social_account_added)
+def after_social_account_added(request, sociallogin, **kwargs):
+    # Realiza acciones después de que el usuario conecte una cuenta social
+    messages.success(request, "Has conectado exitosamente tu cuenta de Facebook.")
+
+@receiver(social_account_updated)
+def after_social_account_updated(request, sociallogin, **kwargs):
+    # Realiza acciones después de que una cuenta social haya sido actualizada
+    updated_data = sociallogin.account.extra_data
+    messages.info(request, "Se ha actualizado la información de tu cuenta social.")
+
+@receiver(social_account_removed)
+def after_social_account_removed(request, socialaccount, **kwargs):
+    # Realiza acciones después de que se elimine una cuenta social
+    messages.warning(request, f"Has desconectado tu cuenta de {socialaccount.provider}.")

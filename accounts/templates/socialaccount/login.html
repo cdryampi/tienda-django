@@ -1,0 +1,61 @@
+{% extends "socialaccount/base_entrance.html" %}
+{% load i18n %}
+{% load allauth %}
+{% load static %}
+{% block head_title %}
+    {% trans "Iniciar sesión" %}
+{% endblock head_title %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'materialize/css/materialize.min.css' %}">
+    
+    <!-- Iconos de Google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Estilos personalizados (opcional) -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<div class="container">
+    <div class="row">
+        <div class="col s12 m6 offset-m3">
+            <!-- Mensaje principal dependiendo del contexto -->
+            {% if process == "connect" %}
+                <h1 class="center-align teal-text">
+                    {% blocktrans with provider.name as provider %}Conectar con {{ provider }}{% endblocktrans %}
+                </h1>
+                <p class="center-align">
+                    {% blocktrans with provider.name as provider %}Estás a punto de conectar una nueva cuenta de {{ provider }} con tu perfil.{% endblocktrans %}
+                </p>
+            {% else %}
+                <h1 class="center-align teal-text">
+                    {% blocktrans with provider.name as provider %}Iniciar sesión con {{ provider }}{% endblocktrans %}
+                </h1>
+                <p class="center-align">
+                    {% blocktrans with provider.name as provider %}Estás a punto de iniciar sesión usando tu cuenta de {{ provider }}.{% endblocktrans %}
+                </p>
+            {% endif %}
+
+            <!-- Formulario para enviar la solicitud -->
+            <form method="post" class="center-align" style="margin-top: 20px;">
+                {% csrf_token %}
+                <button type="submit" class="btn waves-effect waves-light blue darken-4" style="margin-top: 10px;">
+                    <i class="material-icons left">arrow_forward</i>
+                    {% trans "Continuar" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+    {{ block.super }}
+    <!-- Materialize JS -->
+    <script src="{% static 'materialize/js/materialize.min.js' %}"></script>
+
+    <!-- Inicializar los componentes de Materialize -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            M.AutoInit();
+        });
+    </script>
+{% endblock extra_scripts %}
