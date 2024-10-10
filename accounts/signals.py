@@ -5,6 +5,9 @@ from guardian.shortcuts import assign_perm
 from django.contrib.auth.signals import user_logged_in
 from .models import UserProfile
 from django.contrib import messages
+import requests
+from django.core.files.base import ContentFile
+
 
 # Crear perfil de usuario y asignar grupo cuando se crea un nuevo usuario
 @receiver(post_save, sender=User)
@@ -30,6 +33,22 @@ def create_user_profile(sender, instance, created, **kwargs):
         assign_perm('auth.change_user', instance, instance)
         assign_perm('change_userprofile', instance, user_profile)
         assign_perm('view_userprofile', instance, user_profile)
+
+                # Si el usuario fue creado por un registro social y hay imagen en la sesión
+        if hasattr(instance, 'socialaccount_set'):
+            social_accounts = instance.socialaccount_set.all()
+            if social_accounts.exists():
+                extra_data = social_accounts.first().extra_data
+                if 'picture' in extra_data:
+                    image_url = extra_data['picture']['data']['url']
+
+                    # Descargar la imagen desde la URL
+                    response = requests.get(image_url)
+                    if response.status_code == 200:
+                        # Crear un archivo desde el contenido de la respuesta
+                        image_content = ContentFile(response.content)
+                        # Guardar la imagen en el campo de imagen del perfil
+                        user_profile.foto_perfil.save(f'{instance.username}_profile.jpg', image_content, save=True)
 
 # Eliminar imagen de perfil cuando se elimina un perfil de usuario
 @receiver(post_delete, sender=UserProfile)
