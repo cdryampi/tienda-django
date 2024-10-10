@@ -20,6 +20,8 @@ from allauth.socialaccount.signals import social_account_added
 from allauth.socialaccount.signals import social_account_updated
 from allauth.socialaccount.signals import social_account_removed
 
+from django.shortcuts import redirect
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -118,14 +120,26 @@ def create_or_update_profile_after_social_login(request, sociallogin, **kwargs):
     # Mensaje para indicar al usuario que la cuenta ha sido conectada con éxito
     messages.success(request, "Has conectado exitosamente tu cuenta de Facebook.")
 
-# Signal para acciones adicionales antes del login
 @receiver(pre_social_login)
 def before_social_login(request, sociallogin, **kwargs):
-    # Realiza acciones antes de que el login se procese completamente
-    profile_data = sociallogin.account.extra_data  # Datos adicionales del perfil del proveedor social
-    if profile_data.get('email'):
-        print(f"Email del usuario autenticado: {profile_data['email']}")
-    # Lógica personalizada: Podrías verificar si hay un usuario con este correo
+    # Obtener el email del usuario que intenta loguearse mediante Facebook
+    extra_data = sociallogin.account.extra_data
+    email = extra_data.get('email')
+
+    if email:
+        try:
+            # Verifica si ya existe un usuario con ese email
+            user = User.objects.get(email=email)
+            
+            # Conecta el usuario existente con la cuenta social
+            sociallogin.connect(request, user)
+
+            # Redirigir al usuario a la página de inicio
+            return redirect('core:home')
+
+        except User.DoesNotExist:
+            # Si el usuario no existe, procede con el registro normal
+            pass
 
 # Signal para actualizar el perfil cuando la cuenta social es actualizada
 @receiver(social_account_updated)
