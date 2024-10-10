@@ -89,25 +89,36 @@ def create_cliente_group(sender, **kwargs):
 
 ##login con facebook
 
-@receiver(pre_social_login)
-def create_profile_for_social_user(request, sociallogin, **kwargs):
-    if not sociallogin.is_existing:
-        user = sociallogin.user
-        profile, created = UserProfile.objects.get_or_create(user=user)
+# Signal para crear el perfil del usuario después del inicio de sesión social exitoso
+@receiver(social_account_added)
+def create_or_update_profile_after_social_login(request, sociallogin, **kwargs):
+    user = sociallogin.user
 
-        # Datos adicionales de Facebook
-        extra_data = sociallogin.account.extra_data
-        if 'first_name' in extra_data:
-            user.first_name = extra_data['first_name']
-        if 'last_name' in extra_data:
-            user.last_name = extra_data['last_name']
-        if 'picture' in extra_data:
-            # Guardar la URL de la foto de perfil
-            profile.foto_perfil_url = extra_data['picture']['data']['url']
-        
+    # Asegúrate de que el usuario está guardado antes de crear o actualizar el perfil
+    if not user.pk:
         user.save()
-        profile.save()
 
+    # Crea o actualiza el perfil del usuario
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    # Datos adicionales de Facebook
+    extra_data = sociallogin.account.extra_data
+    if 'first_name' in extra_data:
+        user.first_name = extra_data['first_name']
+    if 'last_name' in extra_data:
+        user.last_name = extra_data['last_name']
+    if 'picture' in extra_data:
+        # Guardar la URL de la foto de perfil
+        profile.foto_perfil_url = extra_data['picture']['data']['url']
+
+    # Guarda los cambios realizados
+    user.save()
+    profile.save()
+
+    # Mensaje para indicar al usuario que la cuenta ha sido conectada con éxito
+    messages.success(request, "Has conectado exitosamente tu cuenta de Facebook.")
+
+# Signal para acciones adicionales antes del login
 @receiver(pre_social_login)
 def before_social_login(request, sociallogin, **kwargs):
     # Realiza acciones antes de que el login se procese completamente
@@ -116,17 +127,14 @@ def before_social_login(request, sociallogin, **kwargs):
         print(f"Email del usuario autenticado: {profile_data['email']}")
     # Lógica personalizada: Podrías verificar si hay un usuario con este correo
 
-@receiver(social_account_added)
-def after_social_account_added(request, sociallogin, **kwargs):
-    # Realiza acciones después de que el usuario conecte una cuenta social
-    messages.success(request, "Has conectado exitosamente tu cuenta de Facebook.")
-
+# Signal para actualizar el perfil cuando la cuenta social es actualizada
 @receiver(social_account_updated)
 def after_social_account_updated(request, sociallogin, **kwargs):
     # Realiza acciones después de que una cuenta social haya sido actualizada
     updated_data = sociallogin.account.extra_data
     messages.info(request, "Se ha actualizado la información de tu cuenta social.")
 
+# Signal para manejar cuando un usuario elimina una cuenta social
 @receiver(social_account_removed)
 def after_social_account_removed(request, socialaccount, **kwargs):
     # Realiza acciones después de que se elimine una cuenta social
