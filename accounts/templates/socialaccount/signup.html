@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load allauth %}
 {% load static %}
+{% load form_tags %}
 
 {% block title %}Registro con {{ provider_name }}{% endblock title %}
 
@@ -27,9 +28,18 @@
                 {% csrf_token %}
 
                 <!-- Campos del formulario -->
-                <div class="input-field">
-                    {{ form|crispy }}
-                </div>
+                {% for field in form %}
+                    <div class="input-field">
+                        {{ field.label_tag }}
+                        {{ field|add_class:"validate" }}
+                        {% if field.help_text %}
+                            <span class="helper-text">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <span class="helper-text red-text">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
                 
                 <!-- Botón de registro -->
                 <div class="center-align" style="margin-top: 20px;">
