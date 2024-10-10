@@ -1,64 +1,192 @@
+<!-- signup.html -->
 {% extends "base/base.html" %}
-{% load i18n %}
-{% load allauth %}
-{% load static %}
-{% load form_tags %}
+{% load widget_tweaks %}
+{% load material_tags %}
 
-{% block title %}Registro con {{ provider_name }}{% endblock title %}
+{% block title %}Registrarse{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'materialize/css/materialize.min.css' %}">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
 <div class="container">
     <div class="row">
-        <div class="col s12 m6 offset-m3">
-            <h2 class="center-align teal-text">
-                {% trans "Registro con Facebook" %}
-            </h2>
-            <p class="center-align">
-                {% blocktrans with provider_name=account.get_provider.name site_name=site.name %}
-                    Estás a punto de usar tu cuenta de {{ provider_name }} para iniciar sesión en {{ site_name }}. Como último paso, completa el siguiente formulario:
-                {% endblocktrans %}
-            </p>
-
-            <!-- Formulario de registro -->
-            {% url 'socialaccount_signup' as action_url %}
-            <form method="post" action="{{ action_url }}" class="center-align" style="margin-top: 20px;">
+        <div class="col s12 m8 offset-m2 l6 offset-l3">
+            <h3 class="center-align">Regístrate</h3>
+            <form method="post" action="{% url 'account_signup' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-
-                <!-- Campos del formulario -->
-                {% for field in form %}
-                    <div class="input-field">
-                        {{ field.label_tag }}
-                        {{ field|add_class:"validate" }}
-                        {% if field.help_text %}
-                            <span class="helper-text">{{ field.help_text }}</span>
-                        {% endif %}
-                        {% for error in field.errors %}
-                            <span class="helper-text red-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-                
-                <!-- Botón de registro -->
-                <div class="center-align" style="margin-top: 20px;">
-                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">
-                        <i class="material-icons left">check</i>
-                        {% trans "Registrarse" %}
-                    </button>
+                <!-- Campos estándar -->
+                <div class="input-field">
+                    <i class="material-icons prefix">email</i>
+                    {{ form.email|add_class:"validate" }}
+                    <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+                    {% for error in form.email.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
                 </div>
 
-                {{ redirect_field }}
+                <div class="input-field">
+                    <i class="material-icons prefix">account_circle</i>
+                    {{ form.username|add_class:"validate" }}
+                    <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
+                    {% for error in form.username.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">lock</i>
+                    {{ form.password1|add_class:"validate" }}
+                    <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                    {% for error in form.password1.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">lock_outline</i>
+                    {{ form.password2|add_class:"validate" }}
+                    <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                    {% for error in form.password2.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <!-- Campos adicionales -->
+                <div class="file-field input-field">
+                    <div class="btn teal lighten-1">
+                        <span><i class="material-icons">photo_camera</i></span>
+                        {{ form.foto_perfil }}
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Sube tu foto de perfil">
+                    </div>
+                    {% for error in form.foto_perfil.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">event</i>
+                    {{ form.fecha_nacimiento}}
+                    <label for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>
+                    {% for error in form.fecha_nacimiento.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">phone</i>
+                    {{ form.telefono|add_class:"validate" }}
+                    <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+                    {% for error in form.telefono.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">location_on</i>
+                    {{ form.direccion|add_class:"validate" }}
+                    <label for="{{ form.direccion.id_for_label }}">Dirección</label>
+                    {% for error in form.direccion.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">location_city</i>
+                    {{ form.ciudad|add_class:"validate" }}
+                    <label for="{{ form.ciudad.id_for_label }}">Ciudad</label>
+                    {% for error in form.ciudad.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">markunread_mailbox</i>
+                    {{ form.codigo_postal|add_class:"validate" }}
+                    <label for="{{ form.codigo_postal.id_for_label }}">Código Postal</label>
+                    {% for error in form.codigo_postal.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="input-field">
+                    <i class="material-icons prefix">public</i>
+                    {{ form.pais|add_class:"input-field" }}
+                    <label for="{{ form.pais.id_for_label }}">País</label>
+                    {% for error in form.pais.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <!-- Campo gustos_hamburguesas -->
+                <div class="input-field">
+                    <span class="grey-text text-darken-2">Gustos de hamburguesas</span>
+                    <div class="row">
+                        {% for checkbox in form.gustos_hamburguesas %}
+                            <div class="col s12 m6">
+                                <label>
+                                    {{ checkbox.tag }}
+                                    <span>{{ checkbox.choice_label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Campo alergias -->
+                <div class="input-field">
+                    <span class="grey-text text-darken-2">Alergias</span>
+                    <div class="row">
+                        {% for checkbox in form.alergias %}
+                            <div class="col s12 m6">
+                                <label>
+                                    {{ checkbox.tag }}
+                                    <span>{{ checkbox.choice_label }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Campo suscripcion_boletin -->
+                <p>
+                    <label>
+                        {{ form.suscripcion_boletin }}
+                        <span>Suscribirse al boletín</span>
+                    </label>
+                    {% for error in form.suscripcion_boletin.errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                </p>
+
+                <!-- Mostrar errores no específicos de campos -->
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <span class="helper-text red-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Botón de registro -->
+                <div class="center-align">
+                    <button type="submit" class="btn waves-effect waves-light teal lighten-1">
+                        Registrarse
+                        <i class="material-icons right">send</i>
+                    </button>
+                </div>
             </form>
+
+            <!-- Enlace para iniciar sesión si ya tienes una cuenta -->
+            <p class="center-align">¿Ya tienes una cuenta? <a href="{% url 'account_login' %}">Inicia sesión aquí</a>.</p>
         </div>
     </div>
 </div>
 
-<script src="{% static 'materialize/js/materialize.min.js' %}"></script>
+<!-- Inicialización de componentes de Materialize -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        M.AutoInit();
+    document.addEventListener('DOMContentLoaded', function() {        
+        var elemsSelect = document.querySelectorAll('select');
+        if (elemsSelect) {
+            var instancesSelect = M.FormSelect.init(elemsSelect);
+        }
     });
 </script>
-{% endblock content %}
+{% endblock %}

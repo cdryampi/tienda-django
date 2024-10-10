@@ -15,13 +15,6 @@ from django.dispatch import receiver
 from django.contrib import messages 
 
 from django.contrib.auth.signals import user_logged_in
-from allauth.socialaccount.signals import pre_social_login
-from allauth.socialaccount.signals import social_account_added
-from allauth.socialaccount.signals import social_account_updated
-from allauth.socialaccount.signals import social_account_removed
-from allauth.account.utils import perform_login
-
-from django.shortcuts import redirect
 
 
 @receiver(post_save, sender=User)
@@ -91,75 +84,3 @@ def create_cliente_group(sender, **kwargs):
 
 
 ##login con facebook
-
-# Signal para crear el perfil del usuario después del inicio de sesión social exitoso
-@receiver(social_account_added)
-def create_profile_after_social_login(request, sociallogin, **kwargs):
-    user = sociallogin.user
-
-    if not user.pk:
-        user.save()  # Guarda el usuario si aún no está guardado
-
-    # Crea o actualiza el perfil del usuario
-    profile, created = UserProfile.objects.get_or_create(user=user)
-
-    # Rellena el perfil con datos adicionales si están disponibles
-    extra_data = sociallogin.account.extra_data
-    if 'first_name' in extra_data:
-        user.first_name = extra_data['first_name']
-    if 'last_name' in extra_data:
-        user.last_name = extra_data['last_name']
-    if 'picture' in extra_data and 'data' in extra_data['picture']:
-        profile.foto_perfil_url = extra_data['picture']['data']['url']
-
-    user.save()
-    profile.save()
-
-
-@receiver(pre_social_login)
-def before_social_login(request, sociallogin, **kwargs):
-    # Extrae el correo del perfil social
-    extra_data = sociallogin.account.extra_data
-    email = extra_data.get('email')
-
-    if email:
-        try:
-            # Verifica si existe un usuario con ese correo
-            user = User.objects.get(email=email)
-
-            # Conecta el usuario existente con la cuenta social
-            sociallogin.state['process'] = 'connect'
-            perform_login(request, user, email_verification='optional')
-
-            # Redirige al usuario a la página de inicio
-            return redirect('core:home')
-
-        except User.DoesNotExist:
-            # Si el usuario no existe, continúa el registro normal
-            pass
-
-@receiver(social_account_added)
-def create_profile_and_assign_permissions(request, sociallogin, **kwargs):
-    user = sociallogin.user
-    if not user.pk:
-        user.save()
-
-    profile, created = UserProfile.objects.get_or_create(user=user)
-
-    # Asignar permisos al usuario sobre su perfil
-    assign_perm('view_userprofile', user, profile)
-    assign_perm('change_userprofile', user, profile)
-
-
-# Signal para actualizar el perfil cuando la cuenta social es actualizada
-@receiver(social_account_updated)
-def after_social_account_updated(request, sociallogin, **kwargs):
-    # Realiza acciones después de que una cuenta social haya sido actualizada
-    updated_data = sociallogin.account.extra_data
-    messages.info(request, "Se ha actualizado la información de tu cuenta social.")
-
-# Signal para manejar cuando un usuario elimina una cuenta social
-@receiver(social_account_removed)
-def after_social_account_removed(request, socialaccount, **kwargs):
-    # Realiza acciones después de que se elimine una cuenta social
-    messages.warning(request, f"Has desconectado tu cuenta de {socialaccount.provider}.")
