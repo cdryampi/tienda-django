@@ -72,7 +72,13 @@ jobs:
 
       - name: Create Anonymous User
         run: python manage.py shell -c "from django.contrib.auth.models import User; User.objects.get_or_create(username='AnonymousUser')"
-  
+      
+      - name: Add Superuser and Sample Users
+        run: python manage.py add_super_user_and_sample_users
+
+      - name: Add Test Products
+        run: python manage.py agregar_productos # Aquí se ejecuta el comando de productos de prueba
+
       - name: Run tests
         run: python manage.py test
 
@@ -126,6 +132,8 @@ jobs:
             python manage.py migrate
             python manage.py collectstatic --noinput --clear
             python manage.py create_initial_data
+            python manage.py add_super_user_and_sample_users
+            python manage.py agregar_productos
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn

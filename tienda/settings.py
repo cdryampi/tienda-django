@@ -32,7 +32,13 @@ SITE_ID = 1
 ANONYMOUS_USER_ID = -1
 
 INSTALLED_APPS = [
+    'parler', # idiomas
     'accounts',
+    'djmoney',
+    'colorfield',
+    'django_ckeditor_5',
+    'common',
+    'pricing',
     'widget_tweaks',
     'django_countries',
     'django.contrib.sites',
@@ -182,8 +188,22 @@ USE_TZ = True
 # Lista de idiomas soportados
 LANGUAGES = [
     ('es', 'Español'),
-    ('en', 'English'),
+    ('en', 'Inglés'),
+    ('fr', 'Francés'),  # Agrega más idiomas según lo necesites
 ]
+# Configuración de Parler para manejar las traducciones
+PARLER_LANGUAGES = {
+    1: (
+        {'code': 'es'},  # Idioma predeterminado
+        {'code': 'en'},  # Otros idiomas
+        {'code': 'fr'},
+    ),
+    'default': {
+        'fallbacks': ['es'],  # Idioma de reserva cuando una traducción no está disponible
+        'hide_untranslated': False,  # Muestra aunque no haya traducción
+    }
+}
+
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
@@ -221,3 +241,70 @@ AUTH_USER_MODEL = 'auth.User'
 ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+# Configuración opcional para django-money
+DJANGO_MONEY_RATES = {
+    'BASE': 'EUR',  # Establece la moneda base, en este caso Euro
+    'RATES': {
+        'USD': 1.10,  # Tasas de cambio ficticias, estas deben ser dinámicas en producción
+        'GBP': 0.85,  # Estos valores son solo ejemplos, en producción usar API de tasas de cambio
+    }
+}
+
+# Listado de monedas permitidas en tu aplicación
+CURRENCIES = ('EUR', 'USD', 'GBP')
+
+# Moneda predeterminada
+CURRENCY_DEFAULT = 'EUR'
+
+# Configuración opcional para el ckeditor 5
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+# Configuración de CKEditor
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': ['undo', 'redo', '|', 'heading', '|', 'bold', 'italic', 'strikethrough', 'underline', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'blockQuote', 'insertTable', 'mediaEmbed', 'imageUpload', '|', 'removeFormat', 'sourceEditing'],
+        'image': {
+            'toolbar': ['imageTextAlternative', '|', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side']
+        },
+        'table': {
+            'contentToolbar': ['tableColumn', 'tableRow', 'mergeTableCells']
+        },
+        'simpleUpload': {
+            'uploadUrl': 'URL_TO_YOUR_UPLOAD_ENDPOINT',  # Asegúrate de configurar un endpoint para la carga de imágenes
+            'headers': {
+                'X-CSRFToken': 'CSRF_TOKEN'  # Usar el token CSRF correcto aquí
+            }
+        },
+        'height': '400px',
+        'width': 'auto',
+    },
+    'extends': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'blockQuote', 'CKFinder', 'imageUpload', 'undo', 'redo'],
+        'image': {
+            'toolbar': ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative']
+        },
+        'ckfinder': {
+            'uploadUrl': '/ckfinder_connector/',  # Asegúrate de configurar correctamente la URL de subida
+        },
+        'height': '400px',
+        'width': 'auto',
+        'extraPlugins': ','.join([
+            'uploadimage',  # Permite la subida de imágenes
+            'divarea',      # Mejora la edición de la estructura del documento
+            'ckeditor_wiris'  # Plugin para fórmulas matemáticas, si es necesario
+        ]),
+    }
+}
+
+# Jazzmin config
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Admin de Mi tienda",
+    "site_header": "Mi Tienda",
+    "site_brand": "Mi Tienda",
+    "welcome_sign": "Bienvenido al Panel de Administración",
+    "search_model": "auth.User",
+    "user_avatar": None,  # Personaliza esto según tus necesidades
+}

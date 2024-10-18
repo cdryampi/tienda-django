@@ -22,8 +22,7 @@ class UserProfile(models.Model):
     fecha_nacimiento = models.DateField(
         null=True,
         blank=True,
-        help_text="Ingresa tu fecha de nacimiento",
-        auto_now=datetime.now
+        help_text="Ingresa tu fecha de nacimiento"
     )
     telefono = models.CharField(
         max_length=20,

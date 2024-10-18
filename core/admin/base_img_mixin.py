@@ -1,17 +1,13 @@
 from django.db.models import Q
 from multimedia.models import MediaFile
 
-def filter_logo_queryset(model_name, model_id):
+def filter_image_queryset(model_name, model_id):
     queryset = MediaFile.objects.all()
 
     model_fields = {
-        'UserProfile': 'foto_perfil',
-        'StaticPage': 'imagen_pagina_estatica',
-        'Skill': 'logo_skill',
-        'Service': 'service_icons',
-        'Project': 'project_image',
-        'Meta': ['favicons', 'page_icons'],
-        'ExperienciaLaboral': ['logo_empresa', 'logo_empresa_fondo'],
+        'Producto': 'productos_imagenes',  # Asegúrate de que este nombre coincida con el related_name del modelo
+        'Categoria': 'categorias',
+        'Tag': 'tags',
     }
 
     # Obtener campos específicos para el modelo

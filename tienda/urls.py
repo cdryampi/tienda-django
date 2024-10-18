@@ -31,6 +31,7 @@ urlpatterns +=i18n_patterns(
     path('productos/', include('product.urls')),
     path('secure_admin/', admin.site.urls, name='admin'),
     path('accounts/', include('accounts.urls')),
+    path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
 )
 
 # Siempre servir archivos estáticos, tanto en desarrollo como en producción

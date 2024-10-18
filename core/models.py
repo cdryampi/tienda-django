@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.utils.text import slugify
+
 
 # Create your models here.
 class MetadataModel(models.Model):
@@ -20,7 +23,7 @@ class MetadataModel(models.Model):
         help_text= "Metadescripción para el Seo",
         null = True,
         blank= True,
-        verbose_name= "Metatitulo"
+        verbose_name= "Metadescripcion"
     )
 
     class Meta:
@@ -47,6 +50,45 @@ class MetaBase(models.Model):
         """Método para restaurar un objeto que ha sido desactivado."""
         self.is_active = True
         self.save()
+
+class AuditModel(models.Model):
+    """
+    Clase abstracta para agregar información sobre quién creó y modificó los objetos.
+    """
+    created_by = models.ForeignKey(
+        User, 
+        related_name="%(class)s_created", 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        help_text="Usuario que creó el objeto"
+    )
+    updated_by = models.ForeignKey(
+        User, 
+        related_name="%(class)s_updated", 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        help_text="Usuario que actualizó por última vez el objeto"
+    )
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Si el objeto se está creando, asignamos el creador
+            self.created_by = kwargs.pop('user', None)
+        # En cualquier caso, siempre asignamos el actualizador
+        self.updated_by = kwargs.pop('user', None)
+        super().save(*args, **kwargs)
+
+
+class SlugModel(models.Model):
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+
+    class Meta:
+        abstract = True
 
 
 class Hamburguesa(models.Model):
