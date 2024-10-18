@@ -5,7 +5,6 @@
 {% block content %}
 {% comment %} mensaje temporal {% endcomment %}
 
-
 {% if messages  %}
 <div class="mensaje-exitoso card-panel green lighten-1 white-text" id="mensaje_sistema">
     {% for message in messages %}
@@ -32,125 +31,81 @@
 </div>
 
 <!-- Productos destacados -->
-<div class="container" id="productos">
+<div class="container-full" id="productos">
     <h2 class="center-align">Nuestros Productos</h2>
     <div class="row">
-        <!-- Productos for -->
+        <!-- Productos dinámicos -->
         {% for product in products %}
-            <div class="col s12 m6 l4">
+            <div class="col s12 m6 l3">
                 <div class="card hoverable">
                     <div class="card-image" style="position: relative;">
                         <!-- Iconos en la parte superior de la tarjeta -->
                         {% if user.is_authenticated %}
                             <div class="card-icons" style="position: absolute; top: 10px; left: 10px; z-index:100">
-                                
-                                <!-- Alergias del usuario almacenadas en la sesión -->
+                                <!-- Alergias del usuario -->
                                 {% with user_alergias=request.session.alergias %}
-                                    {% if product.alergias and user_alergias %}
-                                        {% for alergia in product.alergias %}
-                                            {% if alergia in user_alergias %}
-                                                <i class="material-icons small amber-text text-darken-3" title="Alergia: {{ alergia }}">
-                                                    {% if alergia == 'gluten' %}
-                                                        report
-                                                    {% elif alergia == 'lactosa' %}
-                                                        block
-                                                    {% elif alergia == 'soja' %}
-                                                        medical_services
-                                                    {% elif alergia == 'frutos_secos' %}
-                                                        warning
-                                                    {% elif alergia == 'mariscos' %}
-                                                        no_meals
-                                                    {% elif alergia == 'huevo' %}
-                                                        egg
-                                                    {% elif alergia == 'pescado' %}
-                                                        waves
-                                                    {% elif alergia == 'apio' %}
-                                                        restaurant
-                                                    {% elif alergia == 'mostaza' %}
-                                                        whatshot
-                                                    {% elif alergia == 'sésamo' %}
-                                                        spa
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% for alergia in product.alergias.all %}
+                                        {% if alergia.nombre in user_alergias %}
+                                            <i class="material-icons small amber-text text-darken-3" title="Alergia: {{ alergia.nombre }}">
+                                                {% if alergia.nombre == 'gluten' %}
+                                                    report
+                                                {% elif alergia.nombre == 'lactosa' %}
+                                                    block
+                                                {% elif alergia.nombre == 'soja' %}
+                                                    medical_services
+                                                {% endif %}
+                                            </i>
+                                        {% endif %}
+                                    {% endfor %}
                                 {% endwith %}
                                 
-                                <!-- Gustos del usuario almacenados en la sesión -->
+                                <!-- Gustos del usuario -->
                                 {% with user_gustos=request.session.gustos_hamburguesas %}
-                                    {% if product.gustos and user_gustos %}
-                                        {% for gusto in product.gustos %}
-                                            {% if gusto in user_gustos %}
-                                                <i class="material-icons small pink-text text-lighten-1" title="Gusto: {{ gusto }}">
-                                                    {% if gusto == 'clasica' %}
-                                                        favorite
-                                                    {% elif gusto == 'doble' %}
-                                                        double_arrow
-                                                    {% elif gusto == 'vegetariana' %}
-                                                        spa
-                                                    {% elif gusto == 'pollo' %}
-                                                        restaurant
-                                                    {% elif gusto == 'especial' %}
-                                                        star
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% for gusto in product.gustos.all %}
+                                        {% if gusto.nombre in user_gustos %}
+                                            <i class="material-icons small pink-text text-lighten-1" title="Gusto: {{ gusto.nombre }}">
+                                                {% if gusto.nombre == 'clasica' %}
+                                                    favorite
+                                                {% elif gusto.nombre == 'doble' %}
+                                                    double_arrow
+                                                {% elif gusto.nombre == 'vegetariana' %}
+                                                    spa
+                                                {% endif %}
+                                            </i>
+                                        {% endif %}
+                                    {% endfor %}
                                 {% endwith %}
 
-                                <!-- Preferencias dietéticas del usuario almacenadas en la sesión -->
+                                <!-- Preferencias dietéticas del usuario -->
                                 {% with user_preferencias=request.session.preferencias_dieteticas %}
-                                    {% if product.preferencias_dieteticas and user_preferencias %}
-                                        {% for preferencia in product.preferencias_dieteticas %}
-                                            {% if preferencia == user_preferencias %}
-                                                <i class="material-icons small green-text text-darken-2" title="Preferencia Dietética: {{ preferencia }}">
-                                                    {% if preferencia == 'vegano' %}
-                                                        grass
-                                                    {% elif preferencia == 'vegetariano' %}
-                                                        eco
-                                                    {% elif preferencia == 'carnivoro' %}
-                                                        set_meal
-                                                    {% elif preferencia == 'pescetariano' %}
-                                                        waves
-                                                    {% elif preferencia == 'sin_restricciones' %}
-                                                        emoji_nature
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    {% for preferencia in product.preferencias_dieteticas.all %}
+                                        {% if preferencia.nombre in user_preferencias %}
+                                            <i class="material-icons small green-text text-darken-2" title="Preferencia Dietética: {{ preferencia.nombre }}">
+                                                {% if preferencia.nombre == 'vegano' %}
+                                                    grass
+                                                {% elif preferencia.nombre == 'vegetariano' %}
+                                                    eco
+                                                {% elif preferencia.nombre == 'carnivoro' %}
+                                                    set_meal
+                                                {% endif %}
+                                            </i>
+                                        {% endif %}
+                                    {% endfor %}
                                 {% endwith %}
                             </div>
                         {% endif %}
 
-                        <!-- Preloader -->
-                        <div class="preloader-wrapper small active" id="{{ product.preloader_id }}">
-                            <div class="spinner-layer spinner-red-only">
-                                <div class="circle-clipper left">
-                                    <div class="circle"></div>
-                                </div>
-                                <div class="gap-patch">
-                                    <div class="circle"></div>
-                                </div>
-                                <div class="circle-clipper right">
-                                    <div class="circle"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Imagen diferida con lazy loading -->
-                        <img data-src="{% static product.imagen %}" alt="{{ product.nombre }}" class="lazy" data-id="{{ forloop.counter }}" style="display:none;">
-                        <span class="card-title">{{ product.nombre }}</span>
-                        <a href="{{ product.url }}" class="btn-floating halfway-fab waves-effect waves-light red">
+                        <!-- Imagen del producto -->
+                        <img data-src="{{ product.imagen_url}}" src="{% static 'images/sample/generic-placeholder.jpg' %}"  alt="{{ product.titulo }}" class="lazy" data-id="{{ product.id }}">
+                        <span class="card-title">{{ product.titulo }}</span>
+                        <a href="{{ product.get_absolute_url }}" class="btn-floating halfway-fab waves-effect waves-light red">
                             <i class="material-icons">add</i>
                         </a>
-                        <span class="price-tag right red-text">${{ product.precio }}</span>
+                        <span class="price-tag right red-text">{{ product.precio }}</span>
                     </div>
                     <div class="card-content product-card">
                         <p>{{ product.descripcion }}</p>
                         <div class="card-action">
-                            <!-- Botón de añadir al carrito -->
                             <a href="#" class="btn waves-effect waves-light teal">
                                 <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
                             </a>
@@ -158,6 +113,7 @@
                     </div>
                 </div>
             </div>
+            
         {% endfor %}
     </div>
 </div>

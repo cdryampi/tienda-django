@@ -250,6 +250,16 @@ DJANGO_MONEY_RATES = {
         'GBP': 0.85,  # Estos valores son solo ejemplos, en producción usar API de tasas de cambio
     }
 }
+# Un diccionario para mapear idiomas a monedas
+IDIOMA_A_MONEDA = {
+    'es': 'EUR',  # Español -> Euro
+    'en-gb': 'GBP',  # Inglés del Reino Unido -> Libra
+    'en-us': 'USD',  # Inglés de Estados Unidos -> Dólar
+    'en': 'USD',
+    'fr': 'EUR',  # Francés -> Euro
+    # Añade más idiomas según tus necesidades
+}
+
 
 # Listado de monedas permitidas en tu aplicación
 CURRENCIES = ('EUR', 'USD', 'GBP')

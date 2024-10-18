@@ -31,3 +31,22 @@ nav ul a, nav .brand-logo {
     max-width: 80%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
+/* Mantén la imagen oculta inicialmente */
+.img-product {
+    display: none;  /* Oculta la imagen hasta que se cargue */
+    width: 100%;  /* Asegúrate de que se ajuste bien a la tarjeta */
+}
+
+/* Efecto de difuminado inicial */
+.blur {
+    filter: blur(10px);
+    transition: filter 1s ease;  /* Duración de 1 segundo para la transición */
+}
+
+/* Transición suave de aparición */
+.fade-in-custom {
+    opacity: 0;
+    transition: opacity 1s ease;  /* Aparecer gradualmente */
+    opacity: 1;
+}

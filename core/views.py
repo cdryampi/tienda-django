@@ -1,7 +1,10 @@
 from typing import Any
 from django.shortcuts import render
+from django.utils import translation
 from django.views.generic import TemplateView
 from django.contrib import messages
+from product.models import Producto
+from django.conf import settings
 
 # Create your views here.
 
@@ -17,63 +20,32 @@ class HomeView(TemplateView):
         for message in storange:
             print(message)
             context['mensaje_sistema'] = message
+        
+        current_language = translation.get_language()
+        moneda = settings.IDIOMA_A_MONEDA.get(current_language, 'EUR')
+        # Consulta de productos con precios traducidos
+        productos = Producto.objects.prefetch_related('precios', 'alergias', 'hamburguesa').filter(is_active=True)[:8]
+        productos_con_precios = []
+        for producto in productos:
+            # Obtener el precio basado en la moneda o primer precio disponible
+            # Filtrar precios por moneda
+            precio = producto.precios.filter(precio_currency=moneda).first()
+            # Si no hay precio en la moneda preferida, usar el primer precio disponible
+            if not precio:
+                precio = producto.precios.first()
+            
+            # Obtener las alergias y el tipo de hamburguesa (si están configurados)
+            alergias = producto.alergias.all()  # Lista de alergias asociadas al producto
+            tipo_hamburguesa = producto.hamburguesa  # Tipo de hamburguesa (ForeignKey)
+            productos_con_precios.append({
+                'titulo': producto.safe_translation_getter('titulo', current_language),
+                'descripcion': producto.safe_translation_getter('descripcion', current_language),
+                'precio': precio.precio if precio else None,  # Precio en el formato que necesitas
+                'imagen_url': producto.imagen.file.url if producto.imagen else None,
+                'slug': producto.slug,
+                'alergias': alergias,  # Alergias asociadas
+                'tipo_hamburguesa': tipo_hamburguesa.nombre if tipo_hamburguesa else None  # Tipo de hamburguesa
+            })
 
-        context['products'] = [
-            {
-                'nombre': 'Hamburguesa Vegana',
-                'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-                'precio': 7.99,
-                'imagen': 'images/sample/burguer3.jpg',
-                'url': '/productos/producto1/',
-                'preloader_id': 'preloader-1',
-                'alergias': ['soja', 'gluten'],
-                'gustos': ['vegetariana'],
-                'preferencias_dieteticas': ['vegano', 'vegetariano']
-            },
-            {
-                'nombre': 'Hamburguesa BBQ',
-                'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-                'precio': 9.99,
-                'imagen': 'images/sample/burguer2.jpg',
-                'url': '/productos/producto2/',
-                'preloader_id': 'preloader-2',
-                'alergias': ['lactosa', 'gluten'],
-                'gustos': ['doble'],
-                'preferencias_dieteticas': ['carnivoro']
-            },
-            {
-                'nombre': 'Hamburguesa Clásica',
-                'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-                'precio': 8.99,
-                'imagen': 'images/sample/burguer1.jpg',
-                'url': '/productos/producto3/',
-                'preloader_id': 'preloader-3',
-                'alergias': ['lactosa', 'gluten'],
-                'gustos': ['clasica'],
-                'preferencias_dieteticas': ['carnivoro']
-            },
-            {
-                'nombre': 'Hamburguesa Picante',
-                'descripcion': 'Hamburguesa con un toque picante, jalapeños y salsa especial picante.',
-                'precio': 9.49,
-                'imagen': 'images/sample/burguer4.jpg',
-                'url': '/productos/producto4/',
-                'preloader_id': 'preloader-4',
-                'alergias': ['gluten'],
-                'gustos': ['doble'],
-                'preferencias_dieteticas': ['carnivoro']
-            },
-            {
-                'nombre': 'Hamburguesa Especial de la Casa',
-                'descripcion': 'Nuestra receta especial con ingredientes frescos y un sabor único.',
-                'precio': 10.99,
-                'imagen': 'images/sample/burguer5.jpg',
-                'url': '/productos/producto5/',
-                'preloader_id': 'preloader-5',
-                'alergias': ['gluten', 'huevo'],
-                'gustos': ['especial'],
-                'preferencias_dieteticas': ['carnivoro']
-            }
-        ]
-
+        context['products'] = productos_con_precios
         return context
