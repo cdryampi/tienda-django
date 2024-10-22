@@ -28,23 +28,23 @@ Este archivo se ajustará para mejorar la usabilidad del panel de administració
 # Importaciones necesarias
 from django.contrib import admin  # Importamos el módulo de administración de Django
 from parler.admin import TranslatableAdmin  # TranslatableAdmin permite gestionar campos traducibles
-from .models import Producto  # Importamos el modelo Producto
-from core.models import Hamburguesa, Alergia  # Importamos los modelos relacionados (Hamburguesa y Alergia)
+from .models import Product  # Importamos el modelo Producto
+from core.models import BurgerType, Allergy  # Importamos los modelos relacionados (Hamburguesa y Alergia)
 from core.admin.utils import METADATA_FIELDS, METABASE_FIELDS, AUDIT_FIELDS, SLUG  # Importamos utilidades del admin para metadatos y otros campos
 from core.admin.base_img_mixin import filter_image_queryset  # Función personalizada para filtrar imágenes en función del modelo
 from django.utils.html import format_html  # Para renderizar contenido HTML en la interfaz del admin
 from django.utils.text import slugify  # Para generar automáticamente slugs basados en texto
-from pricing.models import PrecioProducto
+from pricing.models import PriceProduct
 # Aquí comienza la configuración específica del modelo Producto
 
 class PrecioProductoInline(admin.TabularInline):
     """
     Inline para gestionar los precios del producto desde el admin de Producto.
     """
-    model = PrecioProducto
+    model = PriceProduct
     extra = 1  # Permite agregar un precio adicional
 
-@admin.register(Producto)
+@admin.register(Product)
 class ProductoAdmin(TranslatableAdmin):
     list_display = ('titulo', 'categoria', 'en_stock', 'mostrar_documento')
     search_fields = ('translations__titulo', 'categoria__nombre', 'hamburguesa__nombre')
@@ -77,7 +77,7 @@ class ProductoAdmin(TranslatableAdmin):
 
     # Filtrar imágenes en función del modelo y objeto
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        model_name = Producto.__name__
+        model_name = Product.__name__
         meta_id = None
 
         if hasattr(request, 'resolver_match') and 'object_id' in request.resolver_match.kwargs:

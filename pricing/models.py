@@ -24,14 +24,14 @@ Modelo `PrecioProducto` para gestionar los precios de los productos en diferente
 from django.db import models
 from djmoney.models.fields import MoneyField  # Importamos MoneyField de django-money
 
-class PrecioProducto(models.Model):
+class PriceProduct(models.Model):
     """
     Modelo para manejar precios de productos en diferentes monedas usando MoneyField de django-money.
     """
     
     # Relación con el modelo Producto desde la app product
     producto = models.ForeignKey(
-        'product.Producto',  # Apuntamos al modelo Producto de la app 'product'
+        'product.Product',  # Apuntamos al modelo Producto de la app 'product'
         on_delete=models.CASCADE,
         related_name='precios'
     )

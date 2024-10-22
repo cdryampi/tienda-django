@@ -10,11 +10,11 @@ import shutil
 
 
 # Importa tus modelos
-from product.models import Producto
-from pricing.models import PrecioProducto
+from product.models import Product
+from pricing.models import PriceProduct
 from multimedia.models import MediaFile, DocumentFile
-from common.models import Categoria, Tag
-from core.models import Hamburguesa, Alergia
+from common.models import Category, Tag
+from core.models import BurgerType, Allergy
 from djmoney.money import Money
 from django.utils.text import slugify
 
@@ -119,16 +119,16 @@ class Command(BaseCommand):
         for producto_data in productos_a_agregar:
             with transaction.atomic():
                 # Manejo de la categoría
-                categoria, _ = Categoria.objects.get_or_create(nombre=producto_data['categoria'])
+                categoria, _ = Category.objects.get_or_create(nombre=producto_data['categoria'])
 
                 # Manejo de la imagen
                 imagen = self.handle_image(producto_data.get('imagen'), owner)
 
                 # Manejo de Hamburguesa
-                hamburguesa, _ = Hamburguesa.objects.get_or_create(nombre=producto_data['hamburguesa'])
+                hamburguesa, _ = BurgerType.objects.get_or_create(nombre=producto_data['hamburguesa'])
 
                 # Crear el producto
-                producto, creado = Producto.objects.get_or_create(
+                producto, creado = Product.objects.get_or_create(
                     categoria=categoria,
                     imagen=imagen,
                     hamburguesa=hamburguesa,
@@ -188,14 +188,14 @@ class Command(BaseCommand):
             base_slug = slugify(titulo_es)
             slug = base_slug
             num = 1
-            while Producto.objects.filter(slug=slug).exclude(pk=producto.pk).exists():
+            while Product.objects.filter(slug=slug).exclude(pk=producto.pk).exists():
                 slug = f"{base_slug}-{num}"
                 num += 1
             producto.slug = slug
             producto.save(update_fields=['slug'])
     
     def handle_alergias(self, producto, alergias_nombres):
-        alergias_objs = Alergia.objects.filter(nombre__in=alergias_nombres)
+        alergias_objs = Allergy.objects.filter(nombre__in=alergias_nombres)
         producto.alergias.set(alergias_objs)
 
     def handle_tags(self, producto, tags_nombres):
@@ -207,7 +207,7 @@ class Command(BaseCommand):
 
     def handle_precios(self, producto, precios):
         for precio_data in precios:
-            PrecioProducto.objects.create(
+            PriceProduct.objects.create(
                 producto=producto,
                 precio=Money(precio_data['cantidad'], precio_data['moneda'])
             )

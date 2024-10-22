@@ -98,13 +98,13 @@
                         <!-- Imagen del producto -->
                         <img data-src="{{ product.imagen_url}}" src="{% static 'images/sample/generic-placeholder.jpg' %}"  alt="{{ product.titulo }}" class="lazy" data-id="{{ product.id }}">
                         <span class="card-title">{{ product.titulo }}</span>
-                        <a href="{{ product.get_absolute_url }}" class="btn-floating halfway-fab waves-effect waves-light red">
+                        <a href="{% url 'product:producto_detalle' slug=product.producto_slug %}" class="btn-floating halfway-fab waves-effect waves-light red">
                             <i class="material-icons">add</i>
                         </a>
                         <span class="price-tag right red-text">{{ product.precio }}</span>
                     </div>
                     <div class="card-content product-card">
-                        <p>{{ product.descripcion }}</p>
+                        <p>{{ product.descripcion | safe }}</p>
                         <div class="card-action">
                             <a href="#" class="btn waves-effect waves-light teal">
                                 <i class="material-icons left">add_shopping_cart</i>Añadir al carrito

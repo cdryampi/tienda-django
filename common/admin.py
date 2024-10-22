@@ -19,12 +19,12 @@ Este archivo mejora la usabilidad del panel de administración para gestionar ca
 """
 
 from django.contrib import admin
-from .models import Categoria, Tag
+from .models import Category, Tag
 from django.utils.html import format_html
 from multimedia.models import MediaFile
 from core.admin.base_img_mixin import filter_image_queryset
 
-@admin.register(Categoria)
+@admin.register(Category)
 class CategoriaAdmin(admin.ModelAdmin):
     # Definir qué columnas se muestran en la lista de categorías
     list_display = ('nombre', 'color', 'mostrar_imagen', 'padre')
@@ -43,7 +43,7 @@ class CategoriaAdmin(admin.ModelAdmin):
         return form
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        model_name = Categoria.__name__
+        model_name = Category.__name__
         meta_id = None
 
         if hasattr(request, 'resolver_match') and 'object_id' in request.resolver_match.kwargs:
@@ -80,7 +80,7 @@ class TagAdmin(admin.ModelAdmin):
         return form
     
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        model_name = Categoria.__name__
+        model_name = Category.__name__
         meta_id = None
 
         if hasattr(request, 'resolver_match') and 'object_id' in request.resolver_match.kwargs:

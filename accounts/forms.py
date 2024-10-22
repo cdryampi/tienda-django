@@ -2,7 +2,7 @@
 from django import forms
 from django_countries.fields import CountryField
 from .models import UserProfile
-from core.models import Hamburguesa, Alergia
+from core.models import BurgerType, Allergy
 
 
 class CustomSignupForm(forms.Form):
@@ -16,20 +16,20 @@ class CustomSignupForm(forms.Form):
     pais = CountryField().formfield(label='País', required=False)
     suscripcion_boletin = forms.BooleanField(required=False)
     gustos_hamburguesas = forms.ModelMultipleChoiceField(
-        queryset=Hamburguesa.objects.all(),  # Reemplaza con el queryset de tus hamburguesas
+        queryset=BurgerType.objects.all(),  # Reemplaza con el queryset de tus hamburguesas
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
     alergias = forms.ModelMultipleChoiceField(
-        queryset=Alergia.objects.all(),  # Reemplaza con el queryset de tus alergias
+        queryset=Allergy.objects.all(),  # Reemplaza con el queryset de tus alergias
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['gustos_hamburguesas'].queryset = Hamburguesa.objects.all()  # Ajusta según tu modelo
-        self.fields['alergias'].queryset = Alergia.objects.all()  # Ajusta según tu modelo
+        self.fields['gustos_hamburguesas'].queryset = BurgerType.objects.all()  # Ajusta según tu modelo
+        self.fields['alergias'].queryset = Allergy.objects.all()  # Ajusta según tu modelo
 
     def signup(self, request, user):
         # Crear o actualizar el perfil de usuario asociado

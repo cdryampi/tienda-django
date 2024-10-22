@@ -91,7 +91,7 @@ class SlugModel(models.Model):
         abstract = True
 
 
-class Hamburguesa(models.Model):
+class BurgerType(models.Model):
     NOMBRES_HAMBURGUESAS = [
         ('clasica', 'Clásica'),
         ('doble', 'Doble carne'),
@@ -115,7 +115,7 @@ class Hamburguesa(models.Model):
         super().save(*args, **kwargs)
 
 
-class Alergia(models.Model):
+class Allergy(models.Model):
     TIPOS_ALERGIAS = [
         ('gluten', 'Gluten'),
         ('lactosa', 'Lactosa'),

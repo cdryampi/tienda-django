@@ -1,10 +1,8 @@
-from typing import Any
-from django.shortcuts import render
-from django.utils import translation
 from django.views.generic import TemplateView
 from django.contrib import messages
-from product.models import Producto
-from django.conf import settings
+from product.models import Product
+from core.utils.idioma import IdiomaMixin
+
 
 # Create your views here.
 
@@ -21,10 +19,19 @@ class HomeView(TemplateView):
             print(message)
             context['mensaje_sistema'] = message
         
-        current_language = translation.get_language()
-        moneda = settings.IDIOMA_A_MONEDA.get(current_language, 'EUR')
+        current_language = IdiomaMixin.get_idioma(self)
+        moneda = IdiomaMixin.get_moneda_preferida(current_language)
         # Consulta de productos con precios traducidos
-        productos = Producto.objects.prefetch_related('precios', 'alergias', 'hamburguesa').filter(is_active=True)[:8]
+        productos = Product.objects.prefetch_related(
+            'precios',
+            'alergias',
+            'hamburguesa'
+        ).active_translations(
+            current_language
+        ).filter(
+            is_active = True,
+        ).distinct()[:8]
+
         productos_con_precios = []
         for producto in productos:
             # Obtener el precio basado en la moneda o primer precio disponible
@@ -42,7 +49,7 @@ class HomeView(TemplateView):
                 'descripcion': producto.safe_translation_getter('descripcion', current_language),
                 'precio': precio.precio if precio else None,  # Precio en el formato que necesitas
                 'imagen_url': producto.imagen.file.url if producto.imagen else None,
-                'slug': producto.slug,
+                'producto_slug': producto.slug,
                 'alergias': alergias,  # Alergias asociadas
                 'tipo_hamburguesa': tipo_hamburguesa.nombre if tipo_hamburguesa else None  # Tipo de hamburguesa
             })

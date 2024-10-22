@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from core.models import Hamburguesa, Alergia
+from core.models import BurgerType, Allergy
 
 class Command(BaseCommand):
     help = 'Crea hamburguesas favoritas y alergias iniciales'
@@ -14,7 +14,7 @@ class Command(BaseCommand):
         ]
 
         for h in hamburguesas:
-            Hamburguesa.objects.get_or_create(nombre=h['nombre'])
+            BurgerType.objects.get_or_create(nombre=h['nombre'])
 
         alergias = [
             'gluten', 'lactosa', 'soja', 'frutos_secos', 'mariscos', 
@@ -22,6 +22,6 @@ class Command(BaseCommand):
         ]
 
         for a in alergias:
-            Alergia.objects.get_or_create(nombre=a)
+            Allergy.objects.get_or_create(nombre=a)
 
         self.stdout.write(self.style.SUCCESS('Hamburguesas y Alergias creadas exitosamente'))

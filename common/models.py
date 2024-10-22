@@ -26,7 +26,7 @@ from django_ckeditor_5.fields import CKEditor5Field
 from colorfield.fields import ColorField
 from multimedia.models import MediaFile
 
-class Categoria(models.Model):
+class Category(models.Model):
     nombre = models.CharField(
         max_length=100,
         unique=True

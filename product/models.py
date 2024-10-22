@@ -24,14 +24,14 @@ Futuras modificaciones pendientes:
 
 from django.db import models
 from multimedia.models import MediaFile, DocumentFile
-from core.models import MetaBase, MetadataModel, AuditModel, SlugModel, Hamburguesa, Alergia
-from common.models import Categoria, Tag
+from core.models import MetaBase, MetadataModel, AuditModel, SlugModel, BurgerType, Allergy
+from common.models import Category, Tag
 from django_ckeditor_5.fields import CKEditor5Field
 from parler.models import TranslatableModel, TranslatedFields
 from django.utils.text import slugify
 
 
-class Producto(TranslatableModel, MetaBase, MetadataModel, AuditModel, SlugModel):
+class Product(TranslatableModel, MetaBase, MetadataModel, AuditModel, SlugModel):
     """
     Modelo que representa un producto con soporte para categorías, etiquetas, múltiples precios, imágenes, 
     documentos, y otros metadatos como la auditoría y el manejo de slugs.
@@ -42,7 +42,7 @@ class Producto(TranslatableModel, MetaBase, MetadataModel, AuditModel, SlugModel
     )
     # Relación con Categoria desde la app common
     categoria = models.ForeignKey(
-        Categoria,
+        Category,
         on_delete=models.CASCADE,
         related_name='productos',
         help_text="Categoría a la que pertenece el producto"
@@ -70,12 +70,12 @@ class Producto(TranslatableModel, MetaBase, MetadataModel, AuditModel, SlugModel
 
     # Relación con Hamburguesa y Alergia
     hamburguesa = models.ForeignKey(
-        Hamburguesa,
+        BurgerType,
         on_delete=models.CASCADE,
         related_name='productos'
     )
     alergias = models.ManyToManyField(
-        Alergia,
+        Allergy,
         blank=True,
         help_text="Alergias relacionadas con el producto"
     )
@@ -119,7 +119,7 @@ class Producto(TranslatableModel, MetaBase, MetadataModel, AuditModel, SlugModel
                 slug = base_slug
                 num = 1
                 # Asegurarse de que el slug es único, excluyendo el objeto actual
-                while Producto.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                while Product.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                     slug = f"{base_slug}-{num}"
                     num += 1
                 self.slug = slug

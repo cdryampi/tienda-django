@@ -1,168 +1,96 @@
-from typing import Any
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import ListView, DetailView
+from .models import Product, Category
+from core.utils.idioma import IdiomaMixin
+from django.http import HttpResponseNotAllowed
 
-# Producto 1
-class ProductoDetailView1(TemplateView):
-    template_name = 'product/single_product.html'
-    
-    # Simulamos un contexto con datos estáticos
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product/product_detail.html'
+    context_object_name = 'producto'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['producto'] = {
-            'nombre': 'Hamburguesa Clásica',
-            'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-            'precio': 8.99,
-            'imagen': 'images/sample/burguer1.jpg',
-            'url': '/productos/producto1/'
-        }
 
-        context['productos_relacionados']= [
-            {
-                'nombre': 'Hamburguesa Vegana',
-                'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-                'precio': 7.99,
-                'imagen': 'images/sample/burguer3.jpg',
-                'url': '/productos/producto1/',
-                'preloader_id': 'preloader-1'
+        # Obtener los precios del producto
+        context['precios'] = self.object.precios.all()
 
-            },
-            {
-                'nombre': 'Hamburguesa BBQ',
-                'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-                'precio': 9.99,
-                'imagen': 'images/sample/burguer2.jpg',
-                'url': '/productos/producto2/',
-                'preloader_id': 'preloader-2'
-            },
-            {
-                'nombre': 'Hamburguesa Clásica',
-                'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-                'precio': 8.99,
-                'imagen': 'images/sample/burguer1.jpg',
-                'url': '/productos/producto3/',
-                'preloader_id': 'preloader-3'
-            }
-        ]
+        # Obtener las alergias asociadas
+        context['alergias'] = self.object.alergias.all()
+
+        # Tipo de hamburguesa
+        context['tipo_hamburguesa'] = self.object.hamburguesa.nombre if self.object.hamburguesa else None
+
         return context
 
-# Producto 2
-class ProductoDetailView2(TemplateView):
-    template_name = 'product/single_product.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['producto'] = {
-            'nombre': 'Hamburguesa BBQ',
-            'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-            'precio': 9.99,
-            'imagen': 'images/sample/burguer2.jpg',
-            'url': '/productos/producto2/'
-        }
-        context['productos_relacionados']= [
-            {
-                'nombre': 'Hamburguesa Vegana',
-                'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-                'precio': 7.99,
-                'imagen': 'images/sample/burguer3.jpg',
-                'url': '/productos/producto1/',
-                'preloader_id': 'preloader-1'
-
-            },
-            {
-                'nombre': 'Hamburguesa BBQ',
-                'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-                'precio': 9.99,
-                'imagen': 'images/sample/burguer2.jpg',
-                'url': '/productos/producto2/',
-                'preloader_id': 'preloader-2'
-            },
-            {
-                'nombre': 'Hamburguesa Clásica',
-                'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-                'precio': 8.99,
-                'imagen': 'images/sample/burguer1.jpg',
-                'url': '/productos/producto3/',
-                'preloader_id': 'preloader-3'
-            }
-        ]
-        return context
-
-# Producto 3
-class ProductoDetailView3(TemplateView):
-    template_name = 'product/single_product.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['producto'] = {
-            'nombre': 'Hamburguesa Vegana',
-            'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-            'precio': 7.99,
-            'imagen': 'images/sample/burguer3.jpg',
-            'url': '/productos/producto3/'
-        }
-        context['productos_relacionados']= [
-            {
-                'nombre': 'Hamburguesa Vegana',
-                'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-                'precio': 7.99,
-                'imagen': 'images/sample/burguer3.jpg',
-                'url': '/productos/producto1/',
-                'preloader_id': 'preloader-1'
-
-            },
-            {
-                'nombre': 'Hamburguesa BBQ',
-                'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-                'precio': 9.99,
-                'imagen': 'images/sample/burguer2.jpg',
-                'url': '/productos/producto2/',
-                'preloader_id': 'preloader-2'
-            },
-            {
-                'nombre': 'Hamburguesa Clásica',
-                'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-                'precio': 8.99,
-                'imagen': 'images/sample/burguer1.jpg',
-                'url': '/productos/producto3/',
-                'preloader_id': 'preloader-3'
-            }
-        ]
-        return context
 # productos
 
-class ProductosList(TemplateView):
+class ProductoListView(ListView):
+    model = Product
     template_name = 'product/product_list.html'
+    context_object_name = 'productos'
+
+    def get_queryset(self):
+        # Obtener el idioma y la moneda preferida del usuario o sesión
+        current_language = IdiomaMixin.get_idioma(self)
+        moneda = IdiomaMixin.get_moneda_preferida(current_language)
+        # Consulta de productos activos con precios, alergias y hamburguesa
+        productos  = Product.objects.prefetch_related(
+            'precios',
+            'alergias',
+            'hamburguesa'
+        ).active_translations(
+            current_language
+        ).filter(
+            is_active = True,
+            
+        ).distinct()
+        # Obtener los datos del formulario de POST
+        categoria_id = self.request.POST.get('categoria')
+        precio_min = self.request.POST.get('precio_min')
+        precio_max = self.request.POST.get('precio_max')
+
+        # Aplicar los filtros en el queryset
+        if categoria_id:
+            productos = productos.filter(categoria_id=categoria_id)
+
+        if precio_min:
+            productos = productos.filter(precios__precio__gte=precio_min)
+        
+        if precio_max:
+            productos = productos.filter(precios__precio__lte=precio_max)
+
+        productos_con_precios = []
+
+        for producto in productos:
+            # Obtener el precio basado en la moneda preferida o el primer precio disponible
+            precio = producto.precios.filter(precio_currency=moneda).first()
+            if not precio:
+                precio = producto.precios.first()
+            print(f"Producto: {producto.titulo}, Slug: {producto.slug}")
+            # Construir el diccionario para cada producto con la información necesaria
+            productos_con_precios.append({
+                'titulo': producto.safe_translation_getter('titulo', current_language),
+                'descripcion': producto.safe_translation_getter('descripcion', current_language),
+                'precio': precio.precio if precio else None,  # Precio en la moneda seleccionada o None
+                'imagen_url': producto.imagen.file.url if producto.imagen else None,
+                'product_slug': producto.slug,
+                'alergias': producto.alergias.all(),  # Alergias asociadas
+                'tipo_hamburguesa': producto.hamburguesa.nombre if producto.hamburguesa else None  # Tipo de hamburguesa
+            })
+        return productos_con_precios
+
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['products'] = [
-            {
-                'nombre': 'Hamburguesa Vegana',
-                'descripcion': 'Una opción saludable con un medallón de garbanzos, lechuga, tomate y aguacate.',
-                'precio': 7.99,
-                'imagen': 'images/sample/burguer3.jpg',
-                'url': '/productos/producto1/',
-                'preloader_id': 'preloader-1'
-
-            },
-            {
-                'nombre': 'Hamburguesa BBQ',
-                'descripcion': 'Jugosa hamburguesa cubierta con nuestra salsa BBQ especial, cebolla caramelizada y queso cheddar.',
-                'precio': 9.99,
-                'imagen': 'images/sample/burguer2.jpg',
-                'url': '/productos/producto2/',
-                'preloader_id': 'preloader-2'
-            },
-            {
-                'nombre': 'Hamburguesa Clásica',
-                'descripcion': 'Deliciosa hamburguesa clásica con lechuga, tomate, queso cheddar y carne de res de la mejor calidad.',
-                'precio': 8.99,
-                'imagen': 'images/sample/burguer1.jpg',
-                'url': '/productos/producto3/',
-                'preloader_id': 'preloader-3'
-            }
-        ]
+        context['categorias'] = Category.objects.all()  # Pasar las categorías al contexto
+        # El queryset ya tiene la lista de productos procesada en get_queryset
+        context['products'] = self.get_queryset()
         return context
-
-    
+    def post(self, request, *args, **kwargs):
+        # Sobreescribimos el método post para manejar las solicitudes POST
+        if request.method == 'POST':
+            return self.get(request, *args, **kwargs)
+        else:
+            return HttpResponseNotAllowed(['POST'])

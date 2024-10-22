@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django_countries.fields import CountryField  # Necesitarás instalar django-countries
-from datetime import datetime
+from core.models import BurgerType, Allergy
 
 
 class UserProfile(models.Model):
@@ -55,13 +55,13 @@ class UserProfile(models.Model):
     )
 
     gustos_hamburguesas = models.ManyToManyField(
-        'core.Hamburguesa',  # Referencia como cadena
+        BurgerType,  # Referencia como cadena
         blank=True,
         help_text="Selecciona tus hamburguesas favoritas"
     )
 
     alergias = models.ManyToManyField(
-        'core.Alergia',  # Referencia como cadena
+        Allergy,  # Referencia como cadena
         blank=True,
         help_text="Indica si tienes alguna alergia alimentaria"
     )
