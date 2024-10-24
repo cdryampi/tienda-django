@@ -34,6 +34,7 @@ ANONYMOUS_USER_ID = -1
 INSTALLED_APPS = [
     'parler', # idiomas
     'accounts',
+    'cart', #carrito
     'djmoney',
     'colorfield',
     'django_ckeditor_5',

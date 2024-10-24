@@ -11,17 +11,46 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        current_language = IdiomaMixin.get_idioma(self)
+        moneda = IdiomaMixin.get_moneda_preferida(current_language)
 
-        # Obtener los precios del producto
-        context['precios'] = self.object.precios.all()
+        context['product'] = self.get_object()
+        context['product_price'] = self.get_object().precios.filter(precio_currency=moneda).first().precio
+        # Consulta de productos relacionados (excluyendo el producto actual)
+        productos_relacionados_queryset = Product.objects.prefetch_related(
+            'precios', 'alergias', 'hamburguesa'
+        ).active_translations(
+            current_language
+        ).filter(
+            is_active=True,
+            categoria = self.object.categoria
+        ).exclude(
+            pk=self.object.pk  # Excluir el producto actual
+        ).distinct()[:4]
 
-        # Obtener las alergias asociadas
-        context['alergias'] = self.object.alergias.all()
+        productos_relacionados = []
+        for producto in productos_relacionados_queryset:
+            # Obtener el precio basado en la moneda preferida o el primer precio disponible
+            precio = producto.precios.filter(precio_currency=moneda).first()
+            if not precio:
+                precio = producto.precios.first()
 
-        # Tipo de hamburguesa
-        context['tipo_hamburguesa'] = self.object.hamburguesa.nombre if self.object.hamburguesa else None
+            # Construir el diccionario para cada producto con la información necesaria
+            productos_relacionados.append({
+                'titulo': producto.safe_translation_getter('titulo', current_language),
+                'descripcion': producto.safe_translation_getter('descripcion', current_language),
+                'precio': precio.precio if precio else None,  # Precio en la moneda seleccionada o None
+                'imagen_url': producto.imagen.file.url if producto.imagen else None,
+                'product_slug': producto.slug,
+                'alergias': producto.alergias.all(),  # Alergias asociadas
+                'tipo_hamburguesa': producto.hamburguesa.nombre if producto.hamburguesa else None  # Tipo de hamburguesa
+            })
+
+        # Añadir los productos relacionados al contexto
+        context['productos_relacionados'] = productos_relacionados
 
         return context
+
 
 # productos
 

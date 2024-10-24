@@ -1,0 +1,49 @@
+{% extends "base/base.html" %}
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h4 class="center-align">Tu Carrito de Compras</h4>
+
+    <!-- Lista de productos en el carrito -->
+    <ul class="collection">
+        {% for item in cart_items %}
+        <li class="collection-item avatar">
+            <!-- Imagen del producto -->
+            <img src="{{ item.product.imagen.file.url }}" alt="{{ item.product.titulo }}" class="circle">
+            <span class="title">{{ item.product.titulo }}</span>
+            <p>Precio: {{ item.price }}<br>
+            Cantidad: {{ item.quantity }}<br>
+            Subtotal: {{ item.get_subtotal }}
+            </p>
+
+            <!-- Controles de cantidad -->
+            <form method="POST" action="{% url 'cart:update_quantity' item.product.slug %}" class="secondary-content">
+                {% csrf_token %}
+                <div class="input-field inline">
+                    <button type="submit" name="action" value="decrease" class="btn-small btn-flat waves-effect">-</button>
+                    <span class="quantity center-align">{{ item.quantity }}</span>
+                    <button type="submit" name="action" value="increase" class="btn-small btn-flat waves-effect">+</button>
+                </div>
+            </form>
+
+            <!-- Botón eliminar -->
+            <form method="POST" action="{% url 'cart:remove_item' item.product.slug %}" class="right">
+                {% csrf_token %}
+                <button type="submit" class="btn-small btn-flat waves-effect red-text">Eliminar</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Total del carrito -->
+    <div class="card-panel teal lighten-4">
+        <h5 class="right-align">Total: <strong>{{ total }}</strong></h5>
+    </div>
+
+    <!-- Botón de proceder al pago -->
+    <div class="right-align">
+        <a href="#" class="btn waves-effect waves-light green">Proceder al Pago</a>
+    </div>
+</div>
+{% endblock %}
