@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect
+from django.http import JsonResponse
 from django.views import View
 from django.views.generic import TemplateView
 from django.contrib import messages
@@ -6,6 +7,83 @@ from product.models import Product
 from .models import Cart, CartItem
 from djmoney.money import Money
 from core.utils.idioma import IdiomaMixin
+
+
+class addProductToCard(View):
+    """
+    Vista para añadir un producto al carrito.
+    """
+
+    def post(self, request, *args, **kwards):
+        try:
+
+            product_id = request.POST.get('product_id')
+            if not product_id:
+                return JsonResponse({'status': 'error', 'message': 'No se ha especificado el ID del producto.'})
+            quantity = request.POST.get('quantity', 1)
+
+            product = get_object_or_404(Product, id=product_id)
+
+            # Obtener el carrito del usuario o de la sesión
+
+            cart_id = request.session.get('cart_id')
+
+            if cart_id:
+                try:
+                    cart = Cart.objects.get(id=cart_id)
+                except Cart.DoesNotExist:
+                    cart = Cart.objects.create(user=None)
+                    request.session['cart_id'] = cart.id
+            else:
+                cart = Cart.objects.create(user=None)
+                request.session['cart_id'] = cart.id
+            
+            # Obtener el idioma actual
+            current_language = IdiomaMixin.get_idioma(self)  # Pasar request en lugar de self
+            moneda = IdiomaMixin.get_moneda_preferida(current_language)
+
+            # Buscar el precio en la moneda preferida o el primero disponible
+            precio_producto = product.precios.filter(precio_currency=moneda).first()
+
+            if not precio_producto:
+                # Si no hay un precio en la moneda preferida, usamos el primer precio disponible
+                precio_producto = product.precios.first()
+
+            # Verificar si el producto tiene un precio válido
+            if not precio_producto or precio_producto.precio.amount is None:
+                # Mensaje de error si el producto no tiene un precio válido
+                # messages.error(request, "El producto no tiene un precio válido asignado.")
+                return redirect('product:producto_detalle', slug=product.slug)
+
+            # Buscar si el producto ya está en el carrito
+            cart_item, created = CartItem.objects.get_or_create(
+                cart=cart, 
+                product=product,
+                defaults={'price': precio_producto.precio}
+            )
+
+            if not created:
+                # Si el producto ya estaba en el carrito, incrementar la cantidad
+                cart_item.quantity += quantity
+            else:
+                cart_item.quantity = quantity
+                # Asegurarse de que el precio esté correctamente asignado
+                cart_item.price = Money(precio_producto.precio.amount, precio_producto.precio_currency)
+
+            # Guardar el item del carrito
+            cart_item.save()
+
+            # Devolver una respuesta JSON
+
+            response = {
+                'status': 'success',
+                'message': f'{product.titulo} añadido al carrito.',
+            }
+            return JsonResponse(response)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+
 
 class AddToCartView(View):
     def post(self, request, *args, **kwargs):

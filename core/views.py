@@ -45,6 +45,7 @@ class HomeView(TemplateView):
             alergias = producto.alergias.all()  # Lista de alergias asociadas al producto
             tipo_hamburguesa = producto.hamburguesa  # Tipo de hamburguesa (ForeignKey)
             productos_con_precios.append({
+                'id': producto.id,
                 'titulo': producto.safe_translation_getter('titulo', current_language),
                 'descripcion': producto.safe_translation_getter('descripcion', current_language),
                 'precio': precio.precio if precio else None,  # Precio en el formato que necesitas

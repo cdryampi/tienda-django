@@ -117,9 +117,13 @@
         <div class="card-content product-card">
           <p>{{ product.descripcion | safe }}</p>
           <div class="card-action">
-            <a href="#" class="btn waves-effect waves-light teal">
-              <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
-            </a>
+            <form method="post" id="add-to-cart-form">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <button type="submit" class="btn waves-effect waves-light red">
+                Añadir al carrito
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -127,5 +131,31 @@
     {% endfor %}
   </div>
 </div>
+<script>
+  document.querySelectorAll("#add-to-cart-form").forEach(form => {
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        let formData = new FormData(this);  // `this` se refiere al formulario actual
+        
+        fetch("{% url 'cart:addProductToCard' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                M.toast({html: "Producto añadido al carrito"});
+            } else {
+                M.toast({html: "Error al añadir el producto al carrito"});
+            }
+        });
+    });
+});
+
+</script>
 
 {% endblock %}
