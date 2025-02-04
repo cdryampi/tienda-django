@@ -29,12 +29,14 @@ def create_user_profile(sender, instance, created, **kwargs):
         instance.save(update_fields=['is_staff'])
 
         # Asignar permisos
+
         assign_perm('auth.view_user', instance, instance)
         assign_perm('auth.change_user', instance, instance)
         assign_perm('change_userprofile', instance, user_profile)
         assign_perm('view_userprofile', instance, user_profile)
 
-                # Si el usuario fue creado por un registro social y hay imagen en la sesión
+        # Si el usuario fue creado por un registro social y hay imagen en la sesión
+
         if hasattr(instance, 'socialaccount_set'):
             social_accounts = instance.socialaccount_set.all()
             if social_accounts.exists():

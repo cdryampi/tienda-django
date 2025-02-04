@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from accounts.models import UserProfile
@@ -7,8 +8,14 @@ class Command(BaseCommand):
     help = 'Crea un superusuario y usuarios de muestra si no existen'
 
     def handle(self, *args, **kwargs):
-        User = get_user_model()
+        
+        self.stdout.write(self.style.SUCCESS('Iniciando la creación de usuarios...'))
 
+        self.stdout.write(self.style.SUCCESS('Creando permisos...'))
+
+        call_command('create_permissions')
+        
+        User = get_user_model()
         # Crear el grupo 'cliente' si no existe
         cliente_group, created = Group.objects.get_or_create(name='cliente')
         if created:
@@ -24,7 +31,7 @@ class Command(BaseCommand):
                 password='adminpassword'
             )
             # Crear el perfil de superusuario si no existe
-            UserProfile.objects.get_or_create(user=admin_user)
+            #UserProfile.objects.get_or_create(user=admin_user)
             admin_user.groups.add(cliente_group)
             self.stdout.write(self.style.SUCCESS('Superusuario "admin" creado exitosamente.'))
         else:

@@ -4,6 +4,8 @@ from core.utils.idioma import IdiomaMixin
 from django.http import HttpResponseNotAllowed
 
 
+
+
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'product/product_detail.html'

@@ -147,7 +147,7 @@ WSGI_APPLICATION = 'tienda.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tienda_test',  # Nombre de la base de datos
+        'NAME': 'tienda',  # Nombre de la base de datos
         'USER': 'tienda',  # Usuario de la base de datos
         'PASSWORD': 'thos',  # Contraseña del usuario
         'HOST': 'localhost',  # Servidor donde está la base de datos
