@@ -1,0 +1,59 @@
+{% extends "base/base.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="center-align">💳 Pasarela de Pago</h2>
+
+    {% if cart.get_cart_items %}
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart.get_cart_items %}
+                <tr>
+                    <td>{{ item.product.titulo }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h4 class="right-align">Total: {{ cart.get_total_price }}</h4>
+
+        <div class="center-align">
+            <button id="checkout-button" class="btn waves-effect waves-light">Pagar con Stripe</button>
+        </div>
+
+        <script src="https://js.stripe.com/v3/"></script>
+        <script>
+            var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
+
+            document.getElementById("checkout-button").addEventListener("click", function () {
+                fetch("{% url 'payments:create_checkout_session' %}", {
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.id) {
+                        return stripe.redirectToCheckout({ sessionId: data.id });
+                    } else {
+                        alert("Error en el pago: " + data.error);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        </script>
+    {% else %}
+        <p class="center-align">Tu carrito está vacío.</p>
+        <a href="/" class="btn">Volver a la tienda</a>
+    {% endif %}
+</div>
+{% endblock %}

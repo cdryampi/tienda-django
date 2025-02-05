@@ -8,7 +8,6 @@ from .models import Cart, CartItem
 from djmoney.money import Money
 from core.utils.idioma import IdiomaMixin
 
-
 class addProductToCard(View):
     """
     Vista para añadir un producto al carrito.

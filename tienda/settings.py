@@ -14,13 +14,14 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+from decouple import config
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--9wyz@2^n^+u7s(+_9^^=_4b)-)hxn-!44m54mfn_og#dpg0a6'
+SECRET_KEY = config("SECRET_KEY",'django-insecure-#&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
     'parler', # idiomas
     'accounts',
     'cart', #carrito
+    'payments',
     'djmoney',
     'colorfield',
     'django_ckeditor_5',
@@ -84,8 +86,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
    'facebook': {
         'APP': {
-            'client_id':'561825706412628',
-            'secret': '7c6f97138fabfec33f38ab322a51c489'
+            'client_id': config("FACEBOOK_APP_ID"),
+            'secret': config("FACEBOOK_APP_SECRET"),
         },
         'METHOD': 'oauth2',  # Set to 'js_sdk' to use the Facebook connect SDK
         'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
@@ -319,3 +321,8 @@ JAZZMIN_SETTINGS = {
     "search_model": "auth.User",
     "user_avatar": None,  # Personaliza esto según tus necesidades
 }
+
+# Claves del stripe
+# Cargar claves de Stripe desde el .env
+STRIPE_PUBLIC_KEY = config("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")

@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+{% block title %}Mis Pedidos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="center-align">📦 Mis Pedidos</h2>
+
+    {% if orders %}
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th># Orden</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.total_price }}</td>
+                    <td>
+                        {% if order.is_paid %}
+                            <span class="green-text">Pagado</span>
+                        {% else %}
+                            <span class="red-text">Pendiente</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="center-align">Aún no has realizado pedidos.</p>
+    {% endif %}
+
+    <div class="center-align">
+        <a href="/" class="btn waves-effect waves-light">Volver a la tienda</a>
+    </div>
+</div>
+{% endblock %}

@@ -45,7 +45,8 @@ class Command(BaseCommand):
         sample_users = [
             {'username': 'user1', 'email': 'user1@example.com', 'password': 'password1'},
             {'username': 'user2', 'email': 'user2@example.com', 'password': 'password2'},
-            {'username': 'user3', 'email': 'user3@example.com', 'password': 'password3'}
+            {'username': 'user3', 'email': 'user3@example.com', 'password': 'password3'},
+            {'username': 'AnonymousUser', 'email': 'anonymoususer@example.com', 'password': 'password4'},
         ]
 
         for user_data in sample_users:

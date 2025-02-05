@@ -4,8 +4,7 @@ from django.utils.crypto import get_random_string
 from product.models import Product
 from djmoney.models.fields import MoneyField
 from django.db.models import Sum
-
-
+from djmoney.money import Money
 class Cart(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -46,7 +45,12 @@ class Cart(models.Model):
     
     def get_cart_items(self):
         # Si no hay una ForeignKey, usar una consulta personalizada para obtener los items.
-        return CartItem.objects.filter(cart=self)
+        return self.items.all()
+    
+    
+    def get_total_price(self):
+        total = sum(item.price for item in self.get_cart_items())
+        return total or Money(0, 'EUR')  # Retorna el total con la moneda
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)

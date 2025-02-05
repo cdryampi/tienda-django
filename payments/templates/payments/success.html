@@ -1,0 +1,11 @@
+{% extends "base/base.html" %}
+{% block title %}Pago Exitoso{% endblock %}
+
+{% block content %}
+<div class="container center-align">
+    <h2 class="green-text">✅ ¡Pago realizado con éxito!</h2>
+    <p>Tu pedido ha sido procesado correctamente.</p>
+    <a href="{% url 'order_list' %}" class="btn waves-effect waves-light">Ver mis pedidos</a>
+    <a href="/" class="btn-flat">Volver a la tienda</a>
+</div>
+{% endblock %}
