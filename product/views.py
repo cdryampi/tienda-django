@@ -39,6 +39,7 @@ class ProductDetailView(DetailView):
 
             # Construir el diccionario para cada producto con la información necesaria
             productos_relacionados.append({
+                'id': producto.id,
                 'titulo': producto.safe_translation_getter('titulo', current_language),
                 'descripcion': producto.safe_translation_getter('descripcion', current_language),
                 'precio': precio.precio if precio else None,  # Precio en la moneda seleccionada o None
@@ -101,6 +102,7 @@ class ProductoListView(ListView):
             print(f"Producto: {producto.titulo}, Slug: {producto.slug}")
             # Construir el diccionario para cada producto con la información necesaria
             productos_con_precios.append({
+                'id': producto.id,
                 'titulo': producto.safe_translation_getter('titulo', current_language),
                 'descripcion': producto.safe_translation_getter('descripcion', current_language),
                 'precio': precio.precio if precio else None,  # Precio en la moneda seleccionada o None

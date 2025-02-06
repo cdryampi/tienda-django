@@ -1,5 +1,5 @@
 from django.urls import path
-from payments.views import StripeCheckoutView, stripe_webhook, OrderListView, CheckoutView, SuccessView, CancelView
+from payments.views import StripeCheckoutView, stripe_webhook, OrderListView, CheckoutView, SuccessView, CancelView, PaymentDetailView
 
 app_name = 'payments'
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path("checkout/", CheckoutView.as_view(), name="checkout"),
     path("success/", SuccessView.as_view(), name="success"),
     path("cancel/", CancelView.as_view(), name="cancel"),
+    path("payment_detail/", PaymentDetailView.as_view(), name="payment_detail"),
 ]

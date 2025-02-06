@@ -8,6 +8,7 @@
             {% if user.is_authenticated %}
                 <li><a href="{% url 'payments:order_list' %}">📦 Mis Pedidos</a></li>
             {% endif %}
+            <li><a href="{% url 'core:stripe' %}">💳 buscar factura</a></li>
             <!-- Desplegable para login/logout y registro -->
             <li>
                 <a class="dropdown-trigger valign-wrapper" href="#" data-target="dropdown-user">

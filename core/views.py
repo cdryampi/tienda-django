@@ -6,6 +6,10 @@ from core.utils.idioma import IdiomaMixin
 
 # Create your views here.
 
+class StripeFindDetailView(TemplateView):
+    
+    template_name = 'core/payment_sprite.html'
+
 class HomeView(TemplateView):
     template_name = 'core/home.html'
 

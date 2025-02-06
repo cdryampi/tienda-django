@@ -26,7 +26,7 @@ SECRET_KEY = config("SECRET_KEY",'django-insecure-#&')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gaudeix.info', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = config("ALLOWED_HOSTS",cast=lambda v: [s.strip() for s in v.split(',')])
 
 # Application definition
 SITE_ID = 1

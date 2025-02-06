@@ -1,0 +1,18 @@
+{% extends "base/base.html" %}
+{% block title %}Detalle Factura{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="center-align">Buscador de factura del Sprite:</h2>
+    <div class="row">
+        <div class="col s12 m6">
+            <form action="{% url 'payments:payment_detail' %}" method="POST">
+                {% csrf_token %}
+                <div class="input-field">
+                    <label for="payment_id">ID de Pago (Stripe)</label>
+                    <input type="text" id="payment_id" name="payment_id" required>
+                </div>
+                <button type="submit" class="btn waves-effect waves-light">Buscar</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

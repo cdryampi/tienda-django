@@ -9,17 +9,36 @@ class Order(models.Model):
     """
     Modelo para las ordenes de compra con Stripe
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    items = models.ManyToManyField(CartItem)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    items = models.ManyToManyField(
+        CartItem
+    )
     total_price = MoneyField(
         max_digits=10,
         decimal_places=2,
         default_currency='EUR'
     )
-    payment_id = models.CharField(max_length=255, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_paid = models.BooleanField(default=False)
-
+    payment_id = models.CharField(
+        max_length=255,
+        unique=True
+    )
+    recipt_url = models.URLField(
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+    is_paid = models.BooleanField(
+        default=False
+    )
+    json_data = models.JSONField(
+        null=True,
+        blank=True
+    )
     class Meta:
         ordering = ('-created_at',)
 
@@ -33,6 +52,7 @@ class OrderItem(models.Model):
     """
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.CharField(max_length=255) # Nombre del producto
+    product_id = models.PositiveIntegerField(null=True,blank=True) # ID del producto
     quantity = models.PositiveIntegerField(default=1)
     price = MoneyField(
         max_digits=10,
