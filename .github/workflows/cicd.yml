@@ -19,6 +19,7 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         ports:
           - 5432:5432
         options: >-
@@ -138,8 +139,7 @@ jobs:
             python manage.py migrate
             python manage.py collectstatic --noinput --clear
             python manage.py create_initial_data
-            python manage.py add_super_user_and_sample_users
-            python manage.py agregar_productos
+
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn
