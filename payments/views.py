@@ -186,7 +186,7 @@ class SuccessView(View):
         # Comprobar si la orden ya fue pagada antes, pero tenemos que configurar el webhook para que Stripe nos avise, cosa que no haremos en este proyecto.
         # lo más que se puede hacer es generar la factura asignando los productos pero se tendría que volver a pagar
         # La factura se puede generar manualmente desde el dashboard de Stripe y enviarla al cliente.
-        
+
         if not order.is_paid:
             try:
                 session = stripe.checkout.Session.retrieve(session_id)
@@ -217,8 +217,12 @@ class SuccessView(View):
             "payment_status": json_data["payment_status"],
             "receipt_url": order.recipt_url if order.recipt_url else None,
         }
-
-        request.session["cart_id"] = Cart.objects.create(user=request.user).id
+        if not request.user.is_authenticated:
+            user = User.objects.get_or_create(username="AnonymousUser", defaults={"is_active": False})[0]
+            request.session["cart_id"] = Cart.objects.create(user=user).id
+        else:
+            cart = Cart.objects.create(user=request.user)
+            request.session["cart_id"] = cart.id
 
         return render(request, "payments/success.html", {
             "order": order,
