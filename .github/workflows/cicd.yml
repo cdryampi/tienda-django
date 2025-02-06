@@ -77,17 +77,8 @@ jobs:
         run: |
           python manage.py migrate
 
-      - name: Create Anonymous User
-        run: python manage.py shell -c "from django.contrib.auth.models import User; User.objects.get_or_create(username='AnonymousUser')"
-      
-      - name: Add Superuser and Sample Users
-        run: python manage.py add_super_user_and_sample_users
-
-      - name: Add Test Products
-        run: python manage.py agregar_productos # Aquí se ejecuta el comando de productos de prueba
-
-      - name: Run tests
-        run: python manage.py test
+      - name: Create initial data
+        run: python manage.py create_initial_data
 
   deploy:
     runs-on: ubuntu-latest
@@ -108,6 +99,20 @@ jobs:
             sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/media/
             sudo chmod -R 775 /home/ubuntu/tienda-django/media/
           EOF
+      - name: Generate .env file on the server
+        run: |
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
+              echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > /home/ubuntu/tienda-django/.env
+              echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> /home/ubuntu/tienda-django/.env
+              echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> /home/ubuntu/tienda-django/.env
+              echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /home/ubuntu/tienda-django/.env
+              echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> /home/ubuntu/tienda-django/.env
+              echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> /home/ubuntu/tienda-django/.env
+              echo "FACEBOOK_APP_SECRET=${{ secrets.FACEBOOK_APP_SECRET }}" >> /home/ubuntu/tienda-django/.env
+              echo "STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}" >> /home/ubuntu/tienda-django/.env
+              echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> /home/ubuntu/tienda-django/.env
+              echo "DEBUG=False" >> /home/ubuntu/tienda-django/.env
+            EOF
 
       - name: Install npm dependencies
         run: |
