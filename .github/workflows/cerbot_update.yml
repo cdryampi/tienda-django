@@ -1,0 +1,21 @@
+name: Manual SSL Update
+
+on:
+  workflow_dispatch:  # Permite ejecutar manualmente desde GitHub Actions
+
+jobs:
+  update-ssl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configurar SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+
+      - name: Ejecutar script de actualización de SSL en AWS
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
+            sudo chmod +x /home/ubuntu/tienda-django/scripts/update_ssl_manual.sh
+            sudo /home/ubuntu/tienda-django/scripts/update_ssl_manual.sh
+          EOF
