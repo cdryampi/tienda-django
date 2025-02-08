@@ -347,7 +347,7 @@ DJANGO_VITE = {
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # 🚀 Permitir el frontend en desarrollo
-    "http://127.0.0.1:5173",  # También permitirlo en 127.0.0.1
+    "https://gaudeix.info",  # También permitirlo en 127.0.0.1
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
