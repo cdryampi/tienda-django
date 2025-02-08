@@ -1,0 +1,48 @@
+<!-- core/templates/base.html -->
+{% load django_vite %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tienda{% endblock %}</title>
+
+    <!-- Custom CSS -->
+    {% comment %} {% compress css %}
+      <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    {% endcompress %} {% endcomment %}
+    {% vite_hmr_client %}
+    <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
+    <!-- Material Icons CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Navbar -->
+    {% include "base/navbar.html" %}
+    <h1 class="text-3xl font-bold underline text-center text-red-600">
+      Hello world!
+    </h1>
+    <!-- Main content block -->
+    <div class="container-full">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="container">
+      <h2 class="text-3xl text-purple-500 font-bold">Footer</h2>
+    </div>
+    {% include "base/footer.html" %}
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        let mensaje_sistema = document.getElementById("mensaje_sistema");
+        if(mensaje_sistema){
+          setTimeout(() => {
+            mensaje_sistema.style.display = 'none';
+          }, 5000);
+        }
+      });
+    </script>
+
+</body>
+</html>
