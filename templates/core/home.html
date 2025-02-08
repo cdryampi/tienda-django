@@ -13,149 +13,66 @@
 </div>
 {% endif %}
 
-<div id="index-banner" class="parallax-container">
-  <div class="section no-pad-bot">
-    <div class="container">
-      <br /><br />
-      <h1 class="header center teal-text text-lighten-2">
-        Bienvenidos a Nuestra Hamburguesería
+<div class="relative h-screen bg-fixed bg-center bg-cover" style="background-image: url('{% static "images/sample/parallax.jpg" %}');">
+  <div class="absolute inset-0 bg-black bg-opacity-80"></div> <!-- Overlay para mejor contraste -->
+  
+  <div class="relative flex flex-col items-center justify-center h-full text-teal-500 text-center px-6">
+      <h1 class="text-4xl md:text-6xl font-bold">
+          Bienvenidos a Nuestra Hamburguesería
       </h1>
-      <div class="row center">
-        <h5 class="header col s12 light">
+      <p class="mt-4 text-lg md:text-xl">
           Las mejores hamburguesas al mejor precio
-        </h5>
-      </div>
-      <div class="row center">
-        <a href="#" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">
+      </p>
+      <a href="{% url 'product:product_list' %}" class="mt-6 bg-teal-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-100 hover:text-teal-500 transition">
           Haz tu pedido
-        </a>
-      </div>
-      <br /><br />
-    </div>
+      </a>
   </div>
-  <div class="parallax">
-    <img src="{% static 'images/sample/parallax.jpg' %}" alt="Hamburguesería parallax" />
-  </div>
+
+  <!-- Botón de flecha animado -->
+  <a href="#productos" class="absolute text-9xl bottom-10 left-1/2 transform -translate-x-1/2" data-aos-delay="500">
+    <svg class="w-20 h-20 text-teal-500 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </a>
+  
 </div>
 
 <!-- Productos destacados -->
-<div class="container-full" id="productos">
-  <h2 class="center-align">Nuestros Productos</h2>
-  <div class="row">
+<div class="container py-5 mx-auto" id="productos">
+  <h2 class="text-center text-3xl text-teal-500">Nuestros Productos</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
     {% for product in products %}
-    <div class="col s12 m6 l3">
-      <div class="card hoverable">
-        <div class="card-image" style="position: relative">
-          {% if user.is_authenticated %}
-          <div class="card-icons" style="position: absolute; top: 10px; left: 10px; z-index: 100">
-            
-            <!-- Alergias del usuario -->
-            {% with user_alergias=request.session.alergias %}
-              {% if user_alergias %}
-                {% for alergia in product.alergias.all %}
-                  {% if alergia.nombre in user_alergias %}
-                    <i class="material-icons small amber-text text-darken-3" title="Alergia: {{ alergia.nombre }}">
-                      {% if alergia.nombre == 'gluten' %} report
-                      {% elif alergia.nombre == 'lactosa' %} block
-                      {% elif alergia.nombre == 'soja' %} medical_services
-                      {% endif %}
-                    </i>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
-            <!-- Gustos del usuario -->
-            {% with user_gustos=request.session.gustos_hamburguesas %}
-              {% if user_gustos %}
-                {% for gusto in product.gustos.all %}
-                  {% if gusto.nombre in user_gustos %}
-                    <i class="material-icons small pink-text text-lighten-1" title="Gusto: {{ gusto.nombre }}">
-                      {% if gusto.nombre == 'clasica' %} favorite
-                      {% elif gusto.nombre == 'doble' %} double_arrow
-                      {% elif gusto.nombre == 'vegetariana' %} spa
-                      {% endif %}
-                    </i>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
-            <!-- Preferencias dietéticas del usuario -->
-            {% with user_preferencias=request.session.preferencias_dieteticas %}
-              {% if user_preferencias %}
-                {% for preferencia in product.preferencias_dieteticas.all %}
-                  {% if preferencia.nombre in user_preferencias %}
-                    <i class="material-icons small green-text text-darken-2" title="Preferencia Dietética: {{ preferencia.nombre }}">
-                      {% if preferencia.nombre == 'vegano' %} grass
-                      {% elif preferencia.nombre == 'vegetariano' %} eco
-                      {% elif preferencia.nombre == 'carnivoro' %} set_meal
-                      {% endif %}
-                    </i>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-
-          </div>
-          {% endif %}
-
-          <!-- Imagen del producto -->
-          <img data-src="{{ product.imagen_url }}" 
-               src="{% static 'images/sample/generic-placeholder.jpg' %}" 
-               alt="{{ product.titulo }}" 
-               class="lazy" 
-               data-id="{{ product.id }}" />
-          <span class="card-title">{{ product.titulo }}</span>
-          <a href="{% url 'product:producto_detalle' slug=product.producto_slug %}" 
-             class="btn-floating halfway-fab waves-effect waves-light red">
-            <i class="material-icons">add</i>
-          </a>
-          <span class="price-tag right red-text">{{ product.precio }}</span>
-        </div>
-
-        <div class="card-content product-card">
-          <p>{{ product.descripcion | safe }}</p>
-          <div class="card-action">
-            <form method="post" id="add-to-cart-form">
-              {% csrf_token %}
-              <input type="hidden" name="product_id" value="{{ product.id }}">
-              <button type="submit" class="btn waves-effect waves-light red">
-                Añadir al carrito
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+        {% include 'product/product_card.html' %}
     {% endfor %}
   </div>
 </div>
+
 <script>
-  document.querySelectorAll("#add-to-cart-form").forEach(form => {
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        let formData = new FormData(this);  // `this` se refiere al formulario actual
-        
-        fetch("{% url 'cart:addProductToCard' %}", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}"
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                M.toast({html: "Producto añadido al carrito"});
-            } else {
-                M.toast({html: "Error al añadir el producto al carrito"});
-            }
-        });
+  document.querySelectorAll(".add-to-cart-form").forEach((form) => {
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+  
+      let formData = new FormData(this);
+  
+      fetch("{% url 'cart:addProductToCard' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          toast.success("✅ Producto añadido al carrito!");
+        } else {
+          toast.error("❌ Error al añadir el producto.");
+        }
+      });
     });
-});
+  });
+  
+
 
 </script>
-
 {% endblock %}

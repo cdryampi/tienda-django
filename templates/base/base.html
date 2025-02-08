@@ -8,17 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tienda{% endblock %}</title>
 
-    <!-- Custom CSS -->
-    {% comment %} {% compress css %}
-      <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    {% endcompress %} {% endcomment %}
     {% vite_hmr_client %}
     <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
     <!-- Material Icons CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    <link rel="stylesheet" href={% static "css/output.css" %}>
+    
+    {% vite_asset 'src/main.js' %}
 </head>
-<body class="w-full bg-blue-950">
+<body>
     <!-- Navbar -->
     {% include "base/navbar.html" %}
 
@@ -26,8 +24,12 @@
     <div class="container-full">
         {% block content %}{% endblock %}
     </div>
+    
+    <div id="vue-toast"></div>
 
     {% include "base/footer.html" %}
+    {% include "layout/toast.html" %}
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -39,5 +41,20 @@
         }
       });
     </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Esperar hasta que Vue registre `showToast`
+        let checkToast = setInterval(() => {
+          if (typeof window.showToast === "function") {
+            clearInterval(checkToast);  // Detener el chequeo
+            const djangoMessage = "{{ mensaje_sistema|escapejs }}";  // Mensaje de Django
+            if (djangoMessage) {
+              window.showToast(djangoMessage, "success");
+            }
+          }
+        }, 100); // Revisar cada 100ms
+      });
+    </script>
+    
 </body>
 </html>

@@ -60,4 +60,5 @@ class HomeView(TemplateView):
             })
 
         context['products'] = productos_con_precios
+        context['mensaje_sistema'] = 'Bienvenido a la tienda 🎉'
         return context

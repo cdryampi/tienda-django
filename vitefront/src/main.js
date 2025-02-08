@@ -1,24 +1,25 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import { createApp } from "vue";
+import App from "./App.vue"; // El componente de Vue para los toasts
+import { Toaster, toast } from "vue-sonner";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "./style.css";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+// Inicializar AOS (fuera de Vue)
+AOS.init({
+  duration: 1000,
+  once: true,
+});
 
-setupCounter(document.querySelector('#counter'))
+// Verificar si existe el contenedor de Vue antes de montarlo
+document.addEventListener("DOMContentLoaded", () => {
+  const toastContainer = document.getElementById("vue-toast");
+
+  if (toastContainer) {
+    console.log("✅ `vue-toast` encontrado, montando Vue...");
+    const app = createApp(App);
+    app.mount("#vue-toast");
+  } else {
+    console.warn("⚠️ `vue-toast` no encontrado en `base.html`.");
+  }
+});
