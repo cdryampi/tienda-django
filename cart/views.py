@@ -154,7 +154,7 @@ class CartDetailView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Obtener el carrito del usuario o de la sesión
-        cart = Cart.get_or_create_cart(self.request)
+        cart = Cart.objects.filter(user=self.request.user).last()
         
         # Si el carrito no existe (fue eliminado), crear uno nuevo
         if not cart:

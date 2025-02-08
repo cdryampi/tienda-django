@@ -58,11 +58,11 @@
             <p class="center-align">¿No tienes cuenta? <a href="{% url 'account_signup' %}">Regístrate aquí</a>.</p>
 
             <!-- Inicio de sesión con redes sociales -->
-            <h5 class="center-align">O inicia sesión con:</h5>
+            {% comment %} <h5 class="center-align">O inicia sesión con:</h5>
             <div class="center-align">
                 {% providers_media_js %}
                 {% include "socialaccount/snippets/provider_list.html" %}
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
 </div>

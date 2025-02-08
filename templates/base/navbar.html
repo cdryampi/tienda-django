@@ -1,73 +1,86 @@
-<nav class="white">
-    <div class="nav-wrapper container">
-        <a href="{% url 'core:home' %}" class="brand-logo">Tienda</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="{% url 'product:product_list' %}">Productos</a></li>
-            <li><a href="{% url 'cart:cart_detail' %}">Carrito</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'payments:order_list' %}">📦 Mis Pedidos</a></li>
-            {% endif %}
-            <li><a href="{% url 'core:stripe' %}">💳 buscar factura</a></li>
-            <!-- Desplegable para login/logout y registro -->
-            <li>
-                <a class="dropdown-trigger valign-wrapper" href="#" data-target="dropdown-user">
-                    <!-- Mostrar Foto de Perfil si Existe -->
+<nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-md">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <!-- Logo de la tienda -->
+        <a href="{% url 'core:home' %}" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" class="h-10" alt="Tienda Logo" />
+            <span class="self-center text-2xl font-semibold whitespace-nowrap hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400">Burgers</span>
+        </a>
+
+        <!-- Contenedor de iconos y menú móvil -->
+        <div class="flex items-center md:order-2 space-x-3 rtl:space-x-reverse">
+            <!-- Dropdown de idiomas -->
+            <div class="relative">
+                <button type="button" data-dropdown-toggle="language-dropdown-menu"
+                    class="inline-flex items-center px-4 py-2 text-sm text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i class="material-icons mr-2">language</i> Idioma
+                </button>
+                <!-- Menú de idiomas -->
+                <div id="language-dropdown-menu"
+                    class="z-50 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="/es/"
+                                class="flex items-center"><i class="material-icons mr-2">flag</i> Español</a></li>
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="/en/"
+                                class="flex items-center"><i class="material-icons mr-2">flag</i> English</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Dropdown de usuario -->
+            <div class="relative">
+                <button type="button" data-dropdown-toggle="user-dropdown"
+                    class="flex items-center px-4 py-2 text-sm text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                     {% if request.session.foto_perfil %}
-                        <img src="{{ request.session.foto_perfil }}" alt="{{ request.session.username }}" class="responsive-img circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                    <img src="{{ request.session.foto_perfil }}" alt="{{ request.session.username }}"
+                        class="w-8 h-8 rounded-full">
                     {% else %}
-                        <!-- Mostrar Ícono si No Hay Foto de Perfil -->
-                        <i class="material-icons left" style="font-size: 36px;">account_circle</i>
+                    <i class="material-icons text-3xl">account_circle</i>
                     {% endif %}
-                    <span>Cuenta</span>
-                    <i class="material-icons right">arrow_drop_down</i>
-                </a>
-            </li>
+                </button>
+                <!-- Menú de usuario -->
+                <div id="user-dropdown"
+                    class="z-50 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-400">
+                        {% if user.is_authenticated %}
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="{% url 'admin:index' %}"
+                                class="flex items-center"><i class="material-icons mr-2">person</i> Mi perfil</a></li>
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="{% url 'account_logout' %}"
+                                class="flex items-center"><i class="material-icons mr-2">logout</i> Cerrar sesión</a>
+                        </li>
+                        {% else %}
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="{% url 'account_login' %}"
+                                class="flex items-center"><i class="material-icons mr-2">login</i> Iniciar sesión</a>
+                        </li>
+                        <li class="p-3 flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><a href="{% url 'account_signup' %}"
+                                class="flex items-center"><i class="material-icons mr-2">person_add</i> Registrarse</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
 
-            <li>
-                <a class="dropdown-trigger" href="#" data-target="dropdown-languages">
-                    <i class="material-icons left">language</i> Idioma
-                    <i class="material-icons right">arrow_drop_down</i>
-                </a>
-            </li>
+            <!-- Botón de menú móvil -->
+            <button data-collapse-toggle="mobile-menu" type="button"
+                class="md:hidden p-2 w-10 h-10 text-gray-500 rounded-lg hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700">
+                <i class="material-icons">menu</i>
+            </button>
+        </div>
 
-        </ul>
+        <!-- Menú principal -->
+        <div class="hidden md:flex items-center justify-between w-full md:w-auto md:order-1" id="mobile-menu">
+            <ul
+                class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 dark:border-gray-700">
+                <li><a href="{% url 'product:product_list' %}" class="flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><i
+                            class="material-icons mr-2">storefront</i> Productos</a></li>
+                <li><a href="{% url 'cart:cart_detail' %}" class="flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><i
+                            class="material-icons mr-2">shopping_cart</i> Carrito</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'payments:order_list' %}" class="flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><i
+                            class="material-icons mr-2">inventory_2</i> Mis Pedidos</a></li>
+                {% endif %}
+                <li><a href="{% url 'core:stripe' %}" class="flex items-center text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"><i
+                            class="material-icons mr-2">credit_card</i> Buscar factura</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
-
-<!-- Contenido del desplegable -->
-<ul id="dropdown-user" class="dropdown-content">
-    {% if user.is_authenticated %}
-        <li>
-            <a href="{% url 'admin:index' %}" class="valign-wrapper">
-                {% if request.session.foto_perfil %}
-                    <img src="{{ request.session.foto_perfil }}" alt="{{ request.session.username }}" class="responsive-img circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                {% else %}
-                    <i class="material-icons left" style="font-size: 36px; margin-right: 10px;">person</i>
-                {% endif %}
-                <span>Mi perfil</span>
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'account_logout' %}">
-                <i class="material-icons left">exit_to_app</i> Cerrar sesión
-            </a>
-        </li>
-    {% else %}
-        <li>
-            <a href="{% url 'account_login' %}">
-                <i class="material-icons left">login</i> Iniciar sesión
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'account_signup' %}">
-                <i class="material-icons left">person_add</i> Registrarse
-            </a>
-        </li>
-    {% endif %}
-</ul>
-<!-- Dropdown de idiomas -->
-<ul id="dropdown-languages" class="dropdown-content">
-    <li><a href="/es/"><i class="material-icons left">flag</i> Español</a></li>
-    <li><a href="/en/"><i class="material-icons left">flag</i> English</a></li>
-</ul>

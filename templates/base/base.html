@@ -18,21 +18,17 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
-<body>
+<body class="w-full bg-blue-950">
     <!-- Navbar -->
     {% include "base/navbar.html" %}
-    <h1 class="text-3xl font-bold underline text-center text-red-600">
-      Hello world!
-    </h1>
+
     <!-- Main content block -->
     <div class="container-full">
         {% block content %}{% endblock %}
     </div>
-    <div class="container">
-      <h2 class="text-3xl text-purple-500 font-bold">Footer</h2>
-    </div>
-    {% include "base/footer.html" %}
 
+    {% include "base/footer.html" %}
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         let mensaje_sistema = document.getElementById("mensaje_sistema");
@@ -43,6 +39,5 @@
         }
       });
     </script>
-
 </body>
 </html>
