@@ -31,11 +31,19 @@ class addProductToCard(View):
                 try:
                     cart = Cart.objects.get(id=cart_id)
                 except Cart.DoesNotExist:
+                    if request.user.is_authenticated:
+                        cart = Cart.objects.create(user=request.user)
+                        request.session['cart_id'] = cart.id
+                    else:
+                        cart = Cart.objects.create(user=None)
+                        request.session['cart_id'] = cart.id
+            else:
+                if request.user.is_authenticated:
+                    cart = Cart.objects.create(user=request.user)
+                    request.session['cart_id'] = cart.id
+                else:
                     cart = Cart.objects.create(user=None)
                     request.session['cart_id'] = cart.id
-            else:
-                cart = Cart.objects.create(user=None)
-                request.session['cart_id'] = cart.id
             
             # Obtener el idioma actual
             current_language = IdiomaMixin.get_idioma(self)  # Pasar request en lugar de self
@@ -78,6 +86,9 @@ class addProductToCard(View):
                 'status': 'success',
                 'message': f'{product.titulo} añadido al carrito.',
             }
+            print(cart.get_cart_items())
+            print(request.session['cart_id'])
+            print(cart.user)
             return JsonResponse(response)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})

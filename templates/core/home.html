@@ -47,32 +47,4 @@
   </div>
 </div>
 
-<script>
-  document.querySelectorAll(".add-to-cart-form").forEach((form) => {
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
-  
-      let formData = new FormData(this);
-  
-      fetch("{% url 'cart:addProductToCard' %}", {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-CSRFToken": "{{ csrf_token }}"
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") {
-          toast.success("✅ Producto añadido al carrito!");
-        } else {
-          toast.error("❌ Error al añadir el producto.");
-        }
-      });
-    });
-  });
-  
-
-
-</script>
 {% endblock %}
