@@ -1,12 +1,33 @@
 <template>
     <button
       @click="addToCart"
-      class="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 
-             text-white font-bold px-6 py-2.5 rounded-lg shadow-md transition transform active:scale-95"
+      class="flex items-center justify-center gap-2 bg-gradient-to-r 
+             from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700
+             text-white font-bold px-6 py-3 rounded-lg shadow-lg transition 
+             transform active:scale-95 focus:outline-none focus:ring-2 
+             focus:ring-offset-2 focus:ring-teal-500"
+      aria-label="Añadir al carrito"
     >
-      🛒 Añadir al carrito
+      <!-- Icono de carrito -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 2m11-2l1 2m-5 0v2m0 0h2m-2 0H9m10-12h2"
+        />
+      </svg>
+      
+      <span>Añadir al carrito</span>
     </button>
   </template>
+  
   
   <script setup>
   import { defineProps } from "vue";

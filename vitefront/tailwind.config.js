@@ -3,6 +3,7 @@ export default {
   content: [
     "../templates/**/*.html",
     "../**/templates/**/*.html",
+    "./src/**/*.vue",
   ],
   theme: {
     extend: {},

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
     <!-- Material Icons CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link rel="stylesheet" href={% static "css/output.css" %}>
     
     {% vite_asset 'src/main.js' %}
@@ -25,22 +26,15 @@
         {% block content %}{% endblock %}
     </div>
     
-    <div id="vue-toast"></div>
+    <div id="vue-toast">
+
+    </div>
 
     {% include "base/footer.html" %}
-    {% include "layout/toast.html" %}
+
+
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        let mensaje_sistema = document.getElementById("mensaje_sistema");
-        if(mensaje_sistema){
-          setTimeout(() => {
-            mensaje_sistema.style.display = 'none';
-          }, 5000);
-        }
-      });
-    </script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Esperar hasta que Vue registre `showToast`
@@ -50,6 +44,8 @@
             const djangoMessage = "{{ mensaje_sistema|escapejs }}";  // Mensaje de Django
             if (djangoMessage) {
               window.showToast(djangoMessage, "success");
+            }else{
+              console.log("No hay mensajes del sistema");
             }
           }
         }, 100); // Revisar cada 100ms

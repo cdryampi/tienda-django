@@ -13,6 +13,10 @@
       toast.error(message);
     } else if (type === "info") {
       toast(message);
+    }else if (type === "warning") {
+      toast.warning(message);
+    }else{
+      toast("No se reconoce el tipo de mensaje");
     }
   };
   

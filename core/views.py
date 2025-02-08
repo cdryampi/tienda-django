@@ -20,7 +20,6 @@ class HomeView(TemplateView):
         storange = messages.get_messages(self.request)
 
         for message in storange:
-            print(message)
             context['mensaje_sistema'] = message
         
         current_language = IdiomaMixin.get_idioma(self)
@@ -60,5 +59,4 @@ class HomeView(TemplateView):
             })
 
         context['products'] = productos_con_precios
-        context['mensaje_sistema'] = 'Bienvenido a la tienda 🎉'
         return context
