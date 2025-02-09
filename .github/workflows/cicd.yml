@@ -129,6 +129,7 @@ jobs:
             cd vitefront
             npm install
             npm run build
+            npm run dev
 
             cd ..
             python manage.py collectstatic --noinput --clear

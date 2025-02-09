@@ -2,48 +2,92 @@
 {% block title %}Carrito{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h4 class="center-align">Tu Carrito de Compras</h4>
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">Tu Carrito de Compras</h2>
 
-    <!-- Lista de productos en el carrito -->
-    <ul class="collection">
-        {% for item in cart_items %}
-        <li class="collection-item avatar">
-            <!-- Imagen del producto -->
-            <img src="{{ item.product.imagen.file.url }}" alt="{{ item.product.titulo }}" class="circle">
-            <span class="title">{{ item.product.titulo }}</span>
-            <p>Precio: {{ item.price }}<br>
-            Cantidad: {{ item.quantity }}<br>
-            Subtotal: {{ item.get_subtotal }}
-            </p>
+    {% if cart_items %}
+    <div class="relative overflow-x-auto shadow-md rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Producto</th>
+                    <th scope="col" class="px-6 py-3">Precio</th>
+                    <th scope="col" class="px-6 py-3">Cantidad</th>
+                    <th scope="col" class="px-6 py-3">Subtotal</th>
+                    <th scope="col" class="px-6 py-3">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <!-- Producto -->
+                    <td class="px-6 py-4 flex items-center space-x-3">
+                        <img src="{{ item.product.imagen.file.url }}" alt="{{ item.product.titulo }}" class="w-12 h-12 object-cover rounded">
+                        <span class="text-gray-900 dark:text-white">{{ item.product.titulo }}</span>
+                    </td>
 
-            <!-- Controles de cantidad -->
-            <form method="POST" action="{% url 'cart:update_quantity' item.product.slug %}" class="secondary-content">
-                {% csrf_token %}
-                <div class="input-field inline">
-                    <button type="submit" name="action" value="decrease" class="btn-small btn-flat waves-effect">-</button>
-                    <span class="quantity center-align">{{ item.quantity }}</span>
-                    <button type="submit" name="action" value="increase" class="btn-small btn-flat waves-effect">+</button>
-                </div>
-            </form>
+                    <!-- Precio -->
+                    <td class="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">
+                        {{ item.price }}
+                    </td>
 
-            <!-- Botón eliminar -->
-            <form method="POST" action="{% url 'cart:remove_item' item.product.slug %}" class="right">
-                {% csrf_token %}
-                <button type="submit" class="btn-small btn-flat waves-effect red-text">Eliminar</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
+                    <!-- Cantidad con botones -->
+                    <td class="px-6 py-4">
+                        <form method="POST" action="{% url 'cart:update_quantity' item.product.slug %}" class="flex items-center space-x-2">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="decrease"
+                                class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                                −
+                            </button>
+                            <span class="px-4 py-2 border border-gray-300 rounded-md bg-gray-100 dark:bg-gray-700">
+                                {{ item.quantity }}
+                            </span>
+                            <button type="submit" name="action" value="increase"
+                                class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
+                                +
+                            </button>
+                        </form>
+                    </td>
+
+                    <!-- Subtotal -->
+                    <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
+                        {{ item.get_subtotal }}
+                    </td>
+
+                    <!-- Botón eliminar -->
+                    <td class="px-6 py-4">
+                        <form method="POST" action="{% url 'cart:remove_item' item.product.slug %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded shadow-md">
+                                ❌ Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <!-- Total del carrito -->
-    <div class="card-panel teal lighten-4">
-        <h5 class="right-align">Total: <strong>{{ total }}</strong></h5>
+    <div class="mt-6 flex justify-between items-center">
+        <h4 class="text-2xl font-bold text-gray-800 dark:text-white">Total: <span class="text-green-600 dark:text-green-400">{{ total }}</span></h4>
+        <a href="{% url 'payments:checkout' %}"
+            class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition">
+            🛒 Proceder al Pago
+        </a>
     </div>
 
-    <!-- Botón de proceder al pago -->
-    <div class="right-align">
-        <a href="{% url 'payments:checkout' %}" class="btn waves-effect waves-light green">Proceder al Pago</a>
+    {% else %}
+    <!-- Carrito vacío -->
+    <div class="text-center py-10">
+        <p class="text-gray-700 dark:text-gray-300 text-lg">Tu carrito está vacío.</p>
+        <a href="{% url 'product:product_list' %}" 
+            class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md">
+            🛍️ Seguir comprando
+        </a>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
