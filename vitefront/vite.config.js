@@ -17,11 +17,19 @@ export default defineConfig((mode) => {
                 },
             },
         },
-        server:{
-            host: '127.0.0.1',
+        server: {
+            host: '0.0.0.0',
             port: 5173,
             strictPort: true,
             cors: true,
+            proxy: {
+                "/static/": {
+                    target: "http://127.0.0.1:8000",  // 🔥 Redirige archivos estáticos a Django en desarrollo
+                    changeOrigin: true,
+                    secure: false,
+                },
+            },
         }
+        
     };
 });
