@@ -39,12 +39,12 @@
   
   const addToCart = async () => {
     try {
-      const formData = new FormData();
-      formData.append("product_id", props.productId);
-  
-      const response = await fetch("cart/add-to-cart/", {
+      const response = await fetch("/cart/add-to-cart/", {
         method: "POST",
-        body: formData,
+        body: JSON.stringify({
+          product_id: props.productId,
+          action: "add_to_cart",
+        }),
         headers: {
           "X-CSRFToken": getCSRFToken(),
         },

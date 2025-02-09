@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views import View
@@ -7,164 +8,112 @@ from product.models import Product
 from .models import Cart, CartItem
 from djmoney.money import Money
 from core.utils.idioma import IdiomaMixin
+from django.utils.html import escape
 
-class addProductToCard(View):
+from django.contrib.auth.models import User
+
+class AddProductToCart(View):
     """
-    Vista para añadir un producto al carrito.
+    Vista para añadir, modificar y eliminar un producto al carrito.
     """
 
-    def post(self, request, *args, **kwards):
+    def post(self, request, *args, **kwargs):
         try:
+            # ✅ Leer datos JSON desde la solicitud
+            data = json.loads(request.body)
+            product_id = data.get("product_id")
+            quantity = int(data.get("quantity", 1) or 1)  # ✅ Asegurar que `quantity` es un número
 
-            product_id = request.POST.get('product_id')
             if not product_id:
-                return JsonResponse({'status': 'error', 'message': 'No se ha especificado el ID del producto.'})
-            quantity = request.POST.get('quantity', 1)
+                return JsonResponse({'status': 'error', 'message': 'No se ha especificado el ID del producto.'}, status=400)
 
             product = get_object_or_404(Product, id=product_id)
 
-            # Obtener el carrito del usuario o de la sesión
+            # ✅ Obtener el usuario anónimo de forma segura
+            anominous, _ = User.objects.get_or_create(username='AnonymousUser', defaults={"is_active": False})
 
+            # ✅ Obtener el carrito del usuario o de la sesión
             cart_id = request.session.get('cart_id')
-
             if cart_id:
-                try:
-                    cart = Cart.objects.get(id=cart_id)
-                except Cart.DoesNotExist:
-                    if request.user.is_authenticated:
-                        cart = Cart.objects.create(user=request.user)
-                        request.session['cart_id'] = cart.id
-                    else:
-                        cart = Cart.objects.create(user=None)
-                        request.session['cart_id'] = cart.id
+                cart = Cart.objects.filter(id=cart_id).first()
             else:
-                if request.user.is_authenticated:
-                    cart = Cart.objects.create(user=request.user)
-                    request.session['cart_id'] = cart.id
-                else:
-                    cart = Cart.objects.create(user=None)
-                    request.session['cart_id'] = cart.id
-            
-            # Obtener el idioma actual
-            current_language = IdiomaMixin.get_idioma(self)  # Pasar request en lugar de self
+                cart = None
+
+            if not cart:
+                cart = Cart.objects.create(user=request.user if request.user.is_authenticated else anominous)
+                request.session['cart_id'] = cart.id
+
+            # ✅ Obtener el idioma actual y moneda preferida
+            current_language = IdiomaMixin.get_idioma(self)
             moneda = IdiomaMixin.get_moneda_preferida(current_language)
 
-            # Buscar el precio en la moneda preferida o el primero disponible
-            precio_producto = product.precios.filter(precio_currency=moneda).first()
+            # ✅ Obtener el precio en la moneda preferida o el primero disponible
+            precio_producto = product.precios.filter(precio_currency=moneda).first() or product.precios.first()
 
-            if not precio_producto:
-                # Si no hay un precio en la moneda preferida, usamos el primer precio disponible
-                precio_producto = product.precios.first()
-
-            # Verificar si el producto tiene un precio válido
             if not precio_producto or precio_producto.precio.amount is None:
-                # Mensaje de error si el producto no tiene un precio válido
-                # messages.error(request, "El producto no tiene un precio válido asignado.")
-                return redirect('product:producto_detalle', slug=product.slug)
+                return JsonResponse({'status': 'error', 'message': 'El producto no tiene un precio válido asignado.'}, status=400)
 
-            # Buscar si el producto ya está en el carrito
+            # ✅ Buscar o crear el producto en el carrito
             cart_item, created = CartItem.objects.get_or_create(
-                cart=cart, 
+                cart=cart,
                 product=product,
-                defaults={'price': precio_producto.precio}
+                defaults={'price': Money(precio_producto.precio.amount, precio_producto.precio_currency)}
             )
 
-            if not created:
-                # Si el producto ya estaba en el carrito, incrementar la cantidad
-                cart_item.quantity += quantity
-            else:
-                cart_item.quantity = quantity
-                # Asegurarse de que el precio esté correctamente asignado
-                cart_item.price = Money(precio_producto.precio.amount, precio_producto.precio_currency)
+            # ✅ Manejar actualización de cantidad
+            if data.get('action') == 'update_quantity':
+                change = int(data.get("change", 0) or 0)  # ✅ Asegurar que `change` es un número válido
+                cart_item.quantity += change
 
-            # Guardar el item del carrito
+                if cart_item.quantity <= 0:  # ✅ Si llega a 0, eliminar el producto
+                    cart_item.delete()
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': f'{product.titulo} eliminado del carrito.',
+                        'removed': True,  # ✅ Enviar flag a Vue
+                    })
+
+            # ✅ Manejar eliminación de productos
+            if data.get('action') == 'remove_from_cart':
+                if CartItem.objects.filter(cart=cart, product=product).exists():
+                    CartItem.objects.filter(cart=cart, product=product).delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'message': f'{product.titulo} eliminado del carrito.',
+                    'removed': True,  # ✅ Enviar flag a Vue
+                })
+
+            # ✅ Asegurar que la cantidad nunca sea negativa
+            cart_item.quantity = max(1, cart_item.quantity)
             cart_item.save()
 
-            # Devolver una respuesta JSON
-
+            # ✅ Construir la respuesta JSON
             response = {
                 'status': 'success',
                 'message': f'{product.titulo} añadido al carrito.',
+                'cart_item': {
+                    'product_id': product.id,
+                    'title': product.titulo,
+                    'quantity': cart_item.quantity,
+                    'price': str(cart_item.price),
+                }
             }
-            print(cart.get_cart_items())
-            print(request.session['cart_id'])
-            print(cart.user)
-            return JsonResponse(response)
+
+            if data.get('action') == 'update_quantity':
+                response['message'] = f'La cantidad de {product.titulo} ha sido actualizada.'
+
+            return JsonResponse(response, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Error al procesar JSON'}, status=400)
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
-
-
-
-class AddToCartView(View):
-    def post(self, request, *args, **kwargs):
-        product_slug = kwargs.get('slug')
-        product = get_object_or_404(Product, slug=product_slug)
-
-        # Obtener el ID del carrito desde la sesión
-        cart_id = request.session.get('cart_id')
-
-        if cart_id:
-            # Si ya existe un carrito en la sesión
-            try:
-                cart = Cart.objects.get(id=cart_id)
-            except Cart.DoesNotExist:
-                cart = Cart.objects.create(user=None)  # Crear un nuevo carrito para usuario anónimo
-                request.session['cart_id'] = cart.id
-        else:
-            # Si no existe, creamos un carrito en la sesión
-            cart = Cart.objects.create(user=None)
-            request.session['cart_id'] = cart.id
-
-        # Obtener la cantidad que el usuario quiere agregar (por defecto 1)
-        quantity = int(request.POST.get('quantity', 1))
-
-        # Obtener el idioma actual
-        current_language = IdiomaMixin.get_idioma(self)  # Pasar request en lugar de self
-        moneda = IdiomaMixin.get_moneda_preferida(current_language)
-
-        # Buscar el precio en la moneda preferida o el primero disponible
-        precio_producto = product.precios.filter(precio_currency=moneda).first()
-
-        if not precio_producto:
-            # Si no hay un precio en la moneda preferida, usamos el primer precio disponible
-            precio_producto = product.precios.first()
-
-        # Verificar si el producto tiene un precio válido
-        if not precio_producto or precio_producto.precio.amount is None:
-            # Mensaje de error si el producto no tiene un precio válido
-            # messages.error(request, "El producto no tiene un precio válido asignado.")
-            return redirect('product:producto_detalle', slug=product.slug)
-
-        # Buscar si el producto ya está en el carrito
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart, 
-            product=product,
-            defaults={'price': precio_producto.precio}
-        )
-
-        if not created:
-            # Si el producto ya estaba en el carrito, incrementar la cantidad
-            cart_item.quantity += quantity
-        else:
-            cart_item.quantity = quantity
-            # Asegurarse de que el precio esté correctamente asignado
-            cart_item.price = Money(precio_producto.precio.amount, precio_producto.precio_currency)
-
-        # Guardar el item del carrito
-        cart_item.save()
-
-        # Redirigir al detalle del producto después de añadir al carrito
-        # messages.success(request, f"{product.titulo} añadido al carrito.")
-        return redirect('product:producto_detalle', slug=product.slug)
-
+            print("❌ Error en la vista:", str(e))
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 class CartDetailView(TemplateView):
     template_name = 'cart/cart_detail.html'
 
     def get_context_data(self, **kwargs):
-        """
-        Añadir el carrito y sus items al contexto.
-        """
         context = super().get_context_data(**kwargs)
 
         # Obtener el carrito del usuario o de la sesión
@@ -173,50 +122,30 @@ class CartDetailView(TemplateView):
         else:
             cart_id = self.request.session.get('cart_id')
             cart = Cart.objects.filter(id=cart_id).last()
-            # Si el carrito no existe (fue eliminado), crear uno nuevo
             if not cart:
                 cart = Cart.objects.create(user=self.request.user if self.request.user.is_authenticated else None)
                 self.request.session['cart_id'] = cart.id
 
+        cart_items = cart.get_cart_items() if cart else []
 
-        cart_items = cart.get_cart_items()
-        total = sum(item.get_subtotal() for item in cart_items)  # Calcula el total dinámicamente
+        # ✅ Serializar los datos con `json.dumps()` correctamente
+        cart_items_serialized = [
+            {
+                "id": item.id,
+                "product_id": item.product.id,
+                "title": item.product.titulo,
+                "image": item.product.imagen.file.url if item.product.imagen else "",
+                "price": str(item.price).replace("\xa0", " "),  # ✅ Reemplazamos `\xa0`
+                "quantity": item.quantity,
+                "subtotal": str(item.get_subtotal()).replace("\xa0", " "),
+            }
+            for item in cart_items
+        ]
 
-        context['cart'] = cart
-        context['cart_items'] = cart.items.all()
-        context['total'] = total
+        context['cart_items'] = escape(json.dumps(cart_items_serialized, ensure_ascii=False))  # ✅ Escapamos para evitar HTML mal formado
+        context['total'] = str(sum(item.get_subtotal() for item in cart_items)).replace("\xa0", " ")
 
         return context
-
-
-
-def update_quantity(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    
-    # Obtener el carrito del usuario o crear uno si no está registrado
-    cart = Cart.get_or_create_cart(request)
-    
-    # Obtener el item del carrito
-    cart_item = get_object_or_404(CartItem, cart=cart, product=product)
-    
-    if request.method == 'POST':
-        action = request.POST.get('action')
-
-        if action == 'increase':
-            cart_item.quantity += 1
-            cart_item.save()
-            # messages.success(request, f'Se ha aumentado la cantidad de {product.titulo}.')
-        elif action == 'decrease':
-            if cart_item.quantity > 1:
-                cart_item.quantity -= 1
-                cart_item.save()
-                # messages.success(request, f'Se ha disminuido la cantidad de {product.titulo}.')
-            else:
-                cart_item.delete()
-                # messages.success(request, f'Se ha eliminado {product.titulo} del carrito.')
-
-    return redirect('cart:cart_detail')
-
 
 # Vista para eliminar el item del carrito
 def remove_item(request, slug):
