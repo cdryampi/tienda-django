@@ -98,6 +98,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
             sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/media/
             sudo chmod -R 775 /home/ubuntu/tienda-django/media/
+            sudo rm -f /home/ubuntu/tienda-django/.env
           EOF
       - name: Generate .env file on the server
         run: |
@@ -124,7 +125,6 @@ jobs:
               pkill -f "node" || true
   
               cd /home/ubuntu/tienda-django
-              rm -f .env
               git pull origin main
               source /home/ubuntu/venv/bin/activate
               pip install -r requirements.txt
