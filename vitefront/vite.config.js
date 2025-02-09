@@ -3,14 +3,14 @@ import { resolve } from 'path'
 import Vue from '@vitejs/plugin-vue'
 
 
-export default defineConfig((mode) => {
+export default defineConfig(({ mode }) => {
     return {
         plugins: [Vue()],
-        base: '/static/', // Important later!
+        base: mode === 'production' ? '/static/dist/' : '/static/', // 🔥 Ajusta en producción
         build: {
             manifest: true,
             emptyOutDir: true,
-            outDir: resolve('./dist'), // Important later!
+            outDir: resolve('./dist'),
             rollupOptions: {
                 input: {
                     tailwind: resolve('./src/style.css'),
@@ -22,14 +22,6 @@ export default defineConfig((mode) => {
             port: 5173,
             strictPort: true,
             cors: true,
-            proxy: {
-                "/static/": {
-                    target: "http://127.0.0.1:8000",  // 🔥 Redirige archivos estáticos a Django en desarrollo
-                    changeOrigin: true,
-                    secure: false,
-                },
-            },
-        }
-        
+        },
     };
 });
