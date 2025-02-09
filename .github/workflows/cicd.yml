@@ -111,7 +111,8 @@ jobs:
               echo "FACEBOOK_APP_SECRET=${{ secrets.FACEBOOK_APP_SECRET }}" >> /home/ubuntu/tienda-django/.env
               echo "STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}" >> /home/ubuntu/tienda-django/.env
               echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> /home/ubuntu/tienda-django/.env
-              echo "DEBUG=False" >> /home/ubuntu/tienda-django/.env
+              echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> /home/ubuntu/tienda-django/.env
+              echo "STRIPE_SECRET_KEY=${{ secrets.DEBUG }}" >> /home/ubuntu/tienda-django/.env
             EOF
 
 

@@ -162,15 +162,22 @@ class CartDetailView(TemplateView):
     template_name = 'cart/cart_detail.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Añadir el carrito y sus items al contexto.
+        """
         context = super().get_context_data(**kwargs)
 
         # Obtener el carrito del usuario o de la sesión
-        cart = Cart.objects.filter(user=self.request.user).last()
-        
-        # Si el carrito no existe (fue eliminado), crear uno nuevo
-        if not cart:
-            cart = Cart.objects.create(user=self.request.user if self.request.user.is_authenticated else None)
-            self.request.session['cart_id'] = cart.id
+        if self.request.user.is_authenticated:
+            cart = Cart.objects.filter(user=self.request.user).last()
+        else:
+            cart_id = self.request.session.get('cart_id')
+            cart = Cart.objects.filter(id=cart_id).last()
+            # Si el carrito no existe (fue eliminado), crear uno nuevo
+            if not cart:
+                cart = Cart.objects.create(user=self.request.user if self.request.user.is_authenticated else None)
+                self.request.session['cart_id'] = cart.id
+
 
         cart_items = cart.get_cart_items()
         total = sum(item.get_subtotal() for item in cart_items)  # Calcula el total dinámicamente
