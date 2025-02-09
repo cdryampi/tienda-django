@@ -118,25 +118,29 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-          
-            cd /home/ubuntu/tienda-django
-            git pull origin main
-            source /home/ubuntu/venv/bin/activate
-            pip install -r requirements.txt
-            python manage.py compilemessages
-            python manage.py migrate
-
-            cd vitefront
-            npm install
-            npm run build
-            npm run dev
-
-            cd ..
-            python manage.py collectstatic --noinput --clear
-            python manage.py create_initial_data
-
-          EOF
+            ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
+            
+              # Matar cualquier proceso de npm que esté corriendo
+              pkill -f "node" || true
+  
+              cd /home/ubuntu/tienda-django
+              git pull origin main
+              source /home/ubuntu/venv/bin/activate
+              pip install -r requirements.txt
+              python manage.py compilemessages
+              python manage.py migrate
+  
+              # Construcción de Vite (sin npm run dev)
+              cd vitefront
+              npm install
+              npm run build
+              cd ..
+  
+              # Copiar archivos estáticos de Vite a Django
+              python manage.py collectstatic --noinput --clear
+              python manage.py create_initial_data
+  
+            EOF
 
       - name: Restore permissions after pull and restart Gunicorn
         run: |
