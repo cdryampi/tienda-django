@@ -341,9 +341,15 @@ DJANGO_VITE = {
         "dev_mode": DEBUG,
     }
 }
-DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "dist"  # Carpeta de salida de Vite
-DJANGO_VITE_DEV_MODE = DEBUG  # Usa el servidor de desarrollo en modo DEBUG
-DJANGO_VITE_DEV_SERVER_URL = "http://localhost:5173"  # URL del dev server de Vite
+# ⚡ Ajustar para producción
+if not DEBUG:
+    DJANGO_VITE_ASSETS_PATH = BASE_DIR / "staticfiles" / "dist"  # ✅ Carpeta donde collectstatic guarda los archivos
+else:
+    DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "dist"  # En desarrollo sigue usando static/dist
+
+DJANGO_VITE_DEV_MODE = DEBUG  # Modo desarrollo o producción
+DJANGO_VITE_DEV_SERVER_URL = "http://localhost:5173"  # Servidor de desarrollo de Vite
+
 
 # Cors
 CSRF_TRUSTED_ORIGINS = [

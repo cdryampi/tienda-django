@@ -2,20 +2,53 @@
 {% block title %}Pago Exitoso{% endblock %}
 
 {% block content %}
-<div class="container center-align">
-    <h2 class="green-text">✅ ¡Pago realizado con éxito!</h2>
-    <p>Tu pedido ha sido procesado correctamente.</p>
-    <h4>Detalles del pago:</h4>
-    <ul class="collection">
-        <li class="collection-item">Total: <strong>{{ payment_data.total }} {{ payment_data.currency }}</strong></li>
-        <li class="collection-item">Estado: <strong>{{ payment_data.payment_status }}</strong></li>
-        <li class="collection-item">Fecha: <strong>{{ payment_data.created }}</strong></li>
-        <li class="collection-item">Email del cliente: <strong>{{ payment_data.customer_email }}</strong></li>
-        <li class="collection-item">ID de Pago (Stripe): <strong>{{ payment_data.payment_intent }}</strong></li>
-    </ul>
-    {% if user.is_authenticated %}
-    <a href="{% url 'payments:order_list' %}" class="btn waves-effect waves-light">Ver mis pedidos</a>
-    {% endif %}
-    <a href="/" class="btn-flat">Volver a la tienda</a>
+<div class="container mx-auto max-w-9xl p-6 dark:bg-gray-900 text-center">
+    <h2 class="text-3xl font-bold text-green-500 mb-4">✅ ¡Pago realizado con éxito!</h2>
+    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">Tu pedido ha sido procesado correctamente.</p>
+
+    <!-- Detalles del pago -->
+    <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg">
+        <h4 class="text-xl font-semibold text-teal-500 mb-4">💳 Detalles del Pago:</h4>
+        <ul class="space-y-2 text-gray-700 dark:text-gray-300">
+            <li>Total: <strong class="text-teal-500">{{ payment_data.total }} {{ payment_data.currency }}</strong></li>
+            <li>Estado: <strong class="text-teal-500">{{ payment_data.payment_status }}</strong></li>
+            <li>Fecha: <strong>{{ payment_data.created }}</strong></li>
+            <li>Email del cliente: <strong>{{ payment_data.customer_email }}</strong></li>
+            
+            <!-- ID de Pago con Botón de Copiar -->
+            <li class="flex items-center justify-center space-x-2">
+                <span class="text-gray-900 dark:text-white font-semibold">ID de Pago (Stripe):</span>
+                <span id="payment-id" class="text-teal-500 font-mono">{{ payment_data.payment_intent }}</span>
+                <button onclick="copyPaymentID()" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 p-2 rounded-lg text-gray-700 dark:text-white shadow-md">
+                    📋 Copiar
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Botones de navegación -->
+    <div class="mt-6 flex justify-center gap-4">
+        {% if user.is_authenticated %}
+        <a href="{% url 'payments:order_list' %}" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            📜 Ver mis pedidos
+        </a>
+        {% endif %}
+        <a href="/" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            🏬 Volver a la tienda
+        </a>
+    </div>
 </div>
+
+<!-- Script para copiar el ID -->
+<script>
+    function copyPaymentID() {
+        var paymentID = document.getElementById("payment-id").innerText;
+        navigator.clipboard.writeText(paymentID).then(() => {
+            alert("✅ ID de pago copiado: " + paymentID);
+        }).catch(err => {
+            console.error("❌ Error al copiar:", err);
+        });
+    }
+</script>
+
 {% endblock %}

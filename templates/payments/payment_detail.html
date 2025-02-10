@@ -2,43 +2,53 @@
 {% block title %}Detalle Factura{% endblock %}
 {% block content %}
 
-<div class="container">
-    <h2 class="center-align">Detalle de la Factura</h2>
-    <div class="row">
-        <div class="col s12 m6">
-            <h4>Detalles del pago:</h4>
-            <ul class="collection">
-                <li class="collection-item">Total: <strong>{{ payment_data.total }} {{ payment_data.currency }}</strong></li>
-                <li class="collection-item">Estado: <strong>{{ payment_data.payment_status }}</strong></li>
-                <li class="collection-item">Fecha: <strong>{{ payment_data.created }}</strong></li>
+<div class="container mx-auto max-w-9xl p-6">
+    <h2 class="text-center text-3xl font-bold text-teal-500 mb-6">🧾 Detalle de la Factura</h2>
 
-                <li class="collection-item">Email del cliente: <strong>{{ payment_data.customer_email }}</strong></li>
-                <li class="collection-item">ID de Pago (Stripe): <strong>{{ payment_data.payment_intent }}</strong></li>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Detalles del Pago -->
+        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg">
+            <h4 class="text-xl font-semibold text-teal-500 mb-4">💳 Detalles del Pago:</h4>
+            <ul class="space-y-2">
+                <li class="text-gray-700 dark:text-gray-300">Total: <strong class="text-teal-500">{{ payment_data.total }} {{ payment_data.currency }}</strong></li>
+                <li class="text-gray-700 dark:text-gray-300">Estado: <strong class="text-teal-500">{{ payment_data.payment_status }}</strong></li>
+                <li class="text-gray-700 dark:text-gray-300">Fecha: <strong>{{ payment_data.created }}</strong></li>
+                <li class="text-gray-700 dark:text-gray-300">Email del cliente: <strong>{{ payment_data.customer_email }}</strong></li>
+                <li class="text-gray-700 dark:text-gray-300">ID de Pago (Stripe): <strong>{{ payment_data.payment_intent }}</strong></li>
                 {% if payment_data.receipt_url %}
-                    <li class="collection-item">Recibo: <a href="{{ payment_data.receipt_url }}" target="_blank">Ver recibo</a></li>
+                    <li class="text-gray-700 dark:text-gray-300">Recibo: <a href="{{ payment_data.receipt_url }}" target="_blank" class="text-teal-500 underline">Ver recibo</a></li>
                 {% endif %}
-
             </ul>
         </div>
-        <div class="col s12 m6">
-            <h4>Detalles del pedido:</h4>
-            <ul class="collection">
-                <li class="collection
-                -item">ID de Pedido: <strong>{{ payment_data.order_id }}</strong></li>
-                <li class="collection-item">Productos:</li>
+
+        <!-- Detalles del Pedido -->
+        <div class="p-4 border border-gray-300 dark:border-gray-700 rounded-lg">
+            <h4 class="text-xl font-semibold text-teal-500 mb-4">📦 Detalles del Pedido:</h4>
+            <ul class="space-y-2">
+                <li class="text-gray-700 dark:text-gray-300">ID de Pedido: <strong class="text-teal-500">{{ payment_data.order_id }}</strong></li>
+                <li class="text-gray-700 dark:text-gray-300 font-semibold">Productos:</li>
                 {% for item in products %}
-                <li class="collection-item">
-                    {{ item.product }} x {{ item.quantity }} - {{ item.price }} {{ item.currency }}
-                    <img src="{{item.url}}" alt="{{item.product}}" width="200px" heigth="200px" />
+                <li class="flex items-center space-x-4 p-2 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <img src="{{ item.url }}" alt="{{ item.product }}" class="w-16 h-16 object-cover rounded">
+                    <span class="text-gray-800 dark:text-gray-200">{{ item.product }} x {{ item.quantity }} - <strong class="text-teal-500">{{ item.price }} {{ item.currency }}</strong></span>
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
-    <div class="center-align">
+
+    <!-- Botones de acción -->
+    <div class="mt-6 flex justify-center gap-4">
         {% if user.is_authenticated %}
-        <a href="{% url 'payments:order_list' %}" class="btn waves-effect waves-light">Ver mis pedidos</a>
+        <a href="{% url 'payments:order_list' %}" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            📜 Ver mis pedidos
+        </a>
         {% endif %}
-        <a href="/" class="btn-flat">Volver a la tienda</a>
+        <a href="/" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg shadow-md transition">
+            🏬 Volver a la tienda
+        </a>
     </div>
+
+</div>
+
 {% endblock %}

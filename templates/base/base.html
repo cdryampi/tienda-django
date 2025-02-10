@@ -7,18 +7,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tienda{% endblock %}</title>
-    {% if DEBUG %}
-    {% vite_hmr_client %}
-    <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
-    {% else %}
-    <link rel="stylesheet" href="{% static 'dist/style.css' %}" />
-    {% endif %}
     <!-- Material Icons CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link rel="stylesheet" href={% static "css/output.css" %}>
-    
-    {% vite_asset 'src/main.js' %}
+    {% if DJANGO_VITE_DEV_MODE %}
+        <!-- 🚀 Modo Desarrollo: Usar Vite Dev Server -->
+        {% vite_hmr_client %}
+        <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
+        {% vite_asset 'src/main.js' %}
+    {% else %}
+        <!-- 🌍 Modo Producción: Cargar archivos de staticfiles -->
+        <link rel="stylesheet" href="{% static 'dist/assets/main-DtxcAade.css' %}" />
+        <script type="module" src="{% static 'dist/assets/main-DlMW79oY.js' %}"></script>
+    {% endif %}
 </head>
 <body>
     <!-- Navbar -->

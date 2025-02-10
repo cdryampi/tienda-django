@@ -2,9 +2,18 @@
 {% block title %}Pago Cancelado{% endblock %}
 
 {% block content %}
-<div class="container center-align">
-    <h2 class="red-text">❌ El pago ha sido cancelado</h2>
-    <p>Puedes intentarlo nuevamente.</p>
-    <a href="/" class="btn waves-effect waves-light">Volver a la tienda</a>
+<div class="container mx-auto max-w-lg p-6">
+    <h2 class="text-3xl font-bold text-red-500 mb-4">❌ Pago Cancelado</h2>
+    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">Parece que cancelaste el proceso de pago. Si fue un error, puedes intentarlo de nuevo.</p>
+
+    <!-- Opciones para el usuario -->
+    <div class="flex justify-center gap-4">
+        <a href="{% url 'payments:checkout' %}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            🔄 Reintentar Pago
+        </a>
+        <a href="/" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            🏬 Volver a la tienda
+        </a>
+    </div>
 </div>
 {% endblock %}

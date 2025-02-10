@@ -1,18 +1,22 @@
 {% extends "base/base.html" %}
 {% block title %}Detalle Factura{% endblock %}
 {% block content %}
-<div class="container">
-    <h2 class="center-align">Buscador de factura del Sprite:</h2>
-    <div class="row">
-        <div class="col s12 m6">
-            <form action="{% url 'payments:payment_detail' %}" method="POST">
+<div class="container mx-auto mt-10 p-6">
+    <h2 class="text-center text-2xl font-semibold text-teal-600 mb-6">Buscador de Factura del Stripe:</h2>
+    <div class="flex justify-center">
+        <div class="w-full max-w-md">
+            <form action="{% url 'payments:payment_detail' %}" method="POST" class="bg-gray-100 p-6 rounded-lg shadow">
                 {% csrf_token %}
-                <div class="input-field">
-                    <label for="payment_id">ID de Pago (Stripe)</label>
-                    <input type="text" id="payment_id" name="payment_id" required>
+                <div class="mb-4">
+                    <label for="payment_id" class="block text-gray-700 font-medium">ID de Pago (Stripe)</label>
+                    <input type="text" id="payment_id" name="payment_id" required 
+                           class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none">
                 </div>
-                <button type="submit" class="btn waves-effect waves-light">Buscar</button>
+                <button type="submit" class="w-full bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 transition">
+                    Buscar
+                </button>
             </form>
         </div>
     </div>
+</div>
 {% endblock %}

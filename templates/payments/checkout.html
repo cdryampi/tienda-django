@@ -2,35 +2,43 @@
 {% block title %}Checkout{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="center-align">💳 Pasarela de Pago</h2>
+<div class="container mx-auto max-w-4xl p-6 dark:bg-gray-900 ">
+    <h2 class="text-center text-3xl font-bold text-teal-500 mb-6">💳 Pasarela de Pago</h2>
 
     {% if cart.get_cart_items %}
-        <table class="striped">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart.get_cart_items %}
-                <tr>
-                    <td>{{ item.product.titulo }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <h4 class="right-align">Total: {{ total }}</h4>
-
-        <div class="center-align">
-            <button id="checkout-button" class="btn waves-effect waves-light">Pagar con Stripe</button>
+        <!-- Tabla de productos en el carrito -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-800">
+                    <tr>
+                        <th class="px-6 py-3">Producto</th>
+                        <th class="px-6 py-3">Cantidad</th>
+                        <th class="px-6 py-3">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.get_cart_items %}
+                    <tr class="border-b dark:border-gray-700">
+                        <td class="px-6 py-4">{{ item.product.titulo }}</td>
+                        <td class="px-6 py-4 text-center">{{ item.quantity }}</td>
+                        <td class="px-6 py-4 text-green-600 font-semibold">{{ item.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
+        <!-- Total y botón de pago -->
+        <div class="mt-6 flex flex-col sm:flex-row justify-between items-center">
+            <h4 class="text-xl font-semibold text-gray-900 dark:text-white">
+                🛒 Total: <span class="text-teal-500">{{ total }}</span>
+            </h4>
+            <button id="checkout-button" class="mt-4 sm:mt-0 bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+                💳 Pagar con Stripe
+            </button>
+        </div>
+
+        <!-- Stripe -->
         <script src="https://js.stripe.com/v3/"></script>
         <script>
             var stripe = Stripe("{{ STRIPE_PUBLIC_KEY }}");
@@ -52,8 +60,12 @@
             });
         </script>
     {% else %}
-        <p class="center-align">Tu carrito está vacío.</p>
-        <a href="/" class="btn">Volver a la tienda</a>
+        <p class="text-center text-gray-600 dark:text-gray-300 text-lg">Tu carrito está vacío.</p>
+        <div class="flex justify-center mt-4">
+            <a href="/" class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+                🏬 Volver a la tienda
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
