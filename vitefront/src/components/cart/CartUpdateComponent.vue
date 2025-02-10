@@ -34,7 +34,7 @@ const updateQuantity = async (change) => {
   try {
     const newQuantity = quantity.value + change; // ✅ Ahora usamos `quantity.value`
 
-    const response = await fetch("/es/cart/add-to-cart/", {
+    const response = await fetch("/cart/add-to-cart/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

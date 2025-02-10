@@ -2,25 +2,23 @@
 {% load django_vite %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="es">
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tienda{% endblock %}</title>
+
     <!-- Material Icons CDN -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link rel="stylesheet" href={% static "css/output.css" %}>
-    {% if DJANGO_VITE_DEV_MODE %}
-        <!-- 🚀 Modo Desarrollo: Usar Vite Dev Server -->
-        {% vite_hmr_client %}
-        <link rel="stylesheet" href="{% vite_asset_url 'src/style.css' %}" />
-        {% vite_asset 'src/main.js' %}
-    {% else %}
-        <!-- 🌍 Modo Producción: Cargar archivos de staticfiles -->
-        <link rel="stylesheet" href="{% static 'dist/assets/main-ChRKKzic.css' %}" />
-        <script type="module" src="{% static 'dist/assets/main-BUWflNXH.js' %}"></script>
-    {% endif %}
+    <!-- Estilos estáticos de Django -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+    <!-- HMR Client (solo en desarrollo) -->
+    {% vite_hmr_client %}
+
+    <!-- Archivos compilados por Vite -->
+    {% vite_asset 'src/main.js' %}
 </head>
 <body>
     <!-- Navbar -->
@@ -36,7 +34,10 @@
     </div>
 
     {% include "base/footer.html" %}
-
+    <!-- Formulario oculto para generar el token CSRF -->
+    <form id="csrf-form" style="display: none;">
+        {% csrf_token %}
+    </form>
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>

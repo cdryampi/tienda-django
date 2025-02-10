@@ -71,7 +71,7 @@ const updateQuantity = (newQuantity) => {
 // ✅ Función para eliminar el producto
 const removeItem = async () => {
   try {
-    const response = await fetch("/es/cart/add-to-cart/", {
+    const response = await fetch("/cart/add-to-cart/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

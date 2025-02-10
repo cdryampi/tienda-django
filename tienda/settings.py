@@ -228,11 +228,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_files')
 # Directorios adicionales donde Django buscará archivos estáticos
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'vitefront', 'dist'),
+    os.path.join(BASE_DIR, 'vitefront', 'dist')
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -336,30 +338,25 @@ STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY")
 
 
 # Configuración de Vite-Django
+# ⚡ Ajustar para producción
 DJANGO_VITE = {
     "default": {
-        "dev_mode": DEBUG,
+        "manifest_path": BASE_DIR / "vitefront" / "dist" / ".vite" / "manifest.json",
     }
 }
-# ⚡ Ajustar para producción
-if not DEBUG:
-    DJANGO_VITE_ASSETS_PATH = BASE_DIR / "staticfiles" / "dist"  # ✅ Carpeta donde collectstatic guarda los archivos
-else:
-    DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static" / "dist"  # En desarrollo sigue usando static/dist
 
-DJANGO_VITE_DEV_MODE = DEBUG  # Modo desarrollo o producción
+DJANGO_VITE_ASSETS_PATH = BASE_DIR / "static_files" / "dist"
+
+DJANGO_VITE_DEV_MODE = False  # Modo desarrollo o producción
 DJANGO_VITE_DEV_SERVER_URL = "http://localhost:5173"  # Servidor de desarrollo de Vite
 
 
 # Cors
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173", 
-    "http://127.0.0.1:5173",
     "https://gaudeix.info",
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # 🚀 Para desarrollo con Vite
     "https://gaudeix.info",   # 🔥 Producción
 ]
 
