@@ -1,8 +1,20 @@
 <template>
   <div class="flex items-center space-x-2">
-    <button @click="updateQuantity(-1)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">−</button>
-    <span class="px-4 py-2 border border-gray-300 rounded-md">{{ quantity }}</span>
-    <button @click="updateQuantity(1)" class="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 rounded">+</button>
+    <button
+      @click="updateQuantity(-1)"
+      class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+    >
+      −
+    </button>
+    <span class="px-4 py-2 border border-gray-300 rounded-md">{{
+      quantity
+    }}</span>
+    <button
+      @click="updateQuantity(1)"
+      class="bg-teal-500 hover:bg-teal-600 text-white px-2 py-1 rounded"
+    >
+      +
+    </button>
   </div>
 </template>
 
@@ -22,7 +34,7 @@ const updateQuantity = async (change) => {
   try {
     const newQuantity = quantity.value + change; // ✅ Ahora usamos `quantity.value`
 
-    const response = await fetch("/cart/add-to-cart/", {
+    const response = await fetch("/es/cart/add-to-cart/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +42,7 @@ const updateQuantity = async (change) => {
       },
       body: JSON.stringify({
         product_id: props.productId,
-        change: change, 
+        change: change,
         action: newQuantity <= 0 ? "remove_from_cart" : "update_quantity",
       }),
     });
@@ -43,7 +55,9 @@ const updateQuantity = async (change) => {
         toast.success("Producto eliminado del carrito");
       } else {
         quantity.value = Number(data.cart_item.quantity);
-        toast.success(`producto ${data.cart_item.title} actualizado a ${quantity.value}`);
+        toast.success(
+          `producto ${data.cart_item.title} actualizado a ${quantity.value}`
+        );
         emit("updated", quantity.value); // ✅ Emitimos la cantidad actualizada
       }
     }
@@ -53,6 +67,11 @@ const updateQuantity = async (change) => {
 };
 // ✅ Obtener CSRF Token
 const getCSRFToken = () => {
-  return document.cookie.split("; ").find((row) => row.startsWith("csrftoken="))?.split("=")[1] || "";
+  return (
+    document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("csrftoken="))
+      ?.split("=")[1] || ""
+  );
 };
 </script>

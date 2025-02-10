@@ -2,187 +2,52 @@
 {% load static %}
 
 {% block title %}{{ product.nombre }}{% endblock %}
+
 {% block content %}
-<div class="container">
-    <!-- Breadcrumb deshabilitado en gris -->
-    <nav class="breadcrumb-nav grey lighten-2 px-2">
-        <div class="nav-wrapper">
-            <div class="col s12">
-                <a href="/" class="breadcrumb grey-text text-darken-1">Inicio</a>
-                <a href="/productos" class="breadcrumb grey-text text-darken-1">Productos</a>
-                <span class="breadcrumb grey-text text-darken-1">{{ product.nombre }}</span>
-            </div>
-        </div>
-    </nav>
+<div class="container mx-auto px-4 mt-10">
 
-    <div class="row py-5">
-        <!-- Imagen del producto -->
-        <div class="col s12 m6">
-            <div class="card hoverable">
-                <!-- Imagen del producto -->
-                <div class="card-image">
-                    <img src="{{ product.imagen.file.url }}" alt="{{ product.titulo }}" class="responsive-img">
-                    <span class="card-title">{{ product.titulo }}</span>
+    <!-- 🏆 Card Principal -->
+    <div class="flex flex-col items-center">
+        <div data-aos="flip-left" 
+            class="w-full max-w-lg bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-300 rounded-lg shadow-lg dark:bg-gray-900 dark:border-gray-700 hover:shadow-xl transition duration-300 ease-in-out p-6">
+            
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
+                {{ product.titulo }}
+            </h1>
+
+            <div class="flex justify-center">
+                <img class="rounded-lg object-cover w-96 h-64" 
+                    loading="lazy" 
+                    src="{{ product.imagen_url|default:'https://via.placeholder.com/400' }}" 
+                    alt="{{ product.titulo }}" />
+            </div>
+
+            <div class="px-6 pb-6">
+                <!-- Tipo de Hamburguesa -->
+                {% if product.tipo_hamburguesa %}
+                <p class="mt-2 text-lg text-gray-700 dark:text-gray-300 text-center">
+                    🍔 <span class="font-semibold">Tipo:</span> {{ product.tipo_hamburguesa }}
+                </p>
+                {% endif %}
+
+                <!-- Precio -->
+                <div class="flex items-center justify-center mt-4">
+                    <span class="text-3xl font-extrabold text-blue-700 dark:text-blue-400">
+                        {% if product.precio %}
+                            {{ product.precio }}
+                        {% else %}
+                            <span class="text-gray-500 dark:text-gray-400 text-lg">No disponible</span>
+                        {% endif %}
+                    </span>
                 </div>
-        
-                <!-- Detalles del producto -->
-                <div class="card-content">
-                    <h4 class="green-text text-darken-3">
-                        <span class="price-tag red-text">{{ product_price }}</span>
-                    </h4>
-                    <p>{{ product.descripcion | safe }}</p>
+
+                <!-- 🔥 Botón Vue "Añadir al carrito" -->
+                <div class="flex justify-center mt-4">
+                    <div class="vue-add-to-cart" data-product-id="{{ product.id }}"></div>
                 </div>
-        
-                <!-- Botón de acción -->
-                <div class="card-action center-align">
-                    <form action="{% url 'cart:add_to_cart' product.slug %}" method="POST">
-                        {% csrf_token %}
-                        <label for="quantity">Cantidad:</label>
-                        <input type="number" name="quantity" value="1" min="1" max="10" class="validate">
-                        <button type="submit" class="btn waves-effect waves-light green">
-                            <i class="material-icons left">add_shopping_cart</i> Añadir al carrito
-                        </button>
-                    </form>                    
-                </div>
-            </div>
-        </div>
-        
-
-        <!-- Sección de interacción (botones en gris o deshabilitados) -->
-        <div class="col s12 m6">
-            <!-- Botón "Me gusta" deshabilitado -->
-            <div class="section">
-                <a class="btn-floating btn-large disabled grey lighten-2">
-                    <i class="material-icons grey-text">favorite</i>
-                </a>
-                <span class="grey-text text-darken-1">25 Me gusta</span>
-            </div>
-
-            <!-- Sección de comentarios deshabilitada -->
-            <div class="section">
-                <h5 class="grey-text text-darken-1">Comentarios (Deshabilitado)</h5>
-                <ul class="collection">
-                    <li class="collection-item avatar grey lighten-2">
-                        <img src="{% static 'images/sample/avatar1.jpg' %}" alt="" class="circle">
-                        <span class="title grey-text">Usuario 1</span>
-                        <p class="grey-text">¡Me encantó esta hamburguesa! Muy jugosa y deliciosa.</p>
-                        <a href="#" class="secondary-content disabled"><i class="material-icons grey-text">thumb_up</i></a>
-                    </li>
-                    <li class="collection-item avatar grey lighten-2">
-                        <img src="{% static 'images/sample/avatar2.jpg' %}" alt="" class="circle">
-                        <span class="title grey-text">Usuario 2</span>
-                        <p class="grey-text">Buena relación calidad-precio. Volveré a comprar.</p>
-                        <a href="#" class="secondary-content disabled"><i class="material-icons grey-text">thumb_up</i></a>
-                    </li>
-                    <li class="collection-item avatar grey lighten-2">
-                        <img src="{% static 'images/sample/avatar3.jpg' %}" alt="" class="circle">
-                        <span class="title grey-text">Usuario 3</span>
-                        <p class="grey-text">No estaba tan buena como esperaba, pero estuvo bien.</p>
-                        <a href="#" class="secondary-content disabled"><i class="material-icons grey-text">thumb_up</i></a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Formulario de comentarios deshabilitado -->
-            <div class="section">
-                <h5 class="grey-text text-darken-1">Deja tu comentario (Deshabilitado)</h5>
-                <form action="#" method="POST" class="grey lighten-2">
-                    <div class="input-field">
-                        <textarea id="comentario" class="materialize-textarea grey lighten-2" disabled></textarea>
-                        <label for="comentario">Escribe tu comentario</label>
-                    </div>
-                    <button class="btn disabled grey lighten-2" type="submit">
-                        Enviar <i class="material-icons right">send</i>
-                    </button>
-                </form>
             </div>
         </div>
     </div>
 
-    <!-- Productos relacionados -->
-    <div class="section">
-        <h4 class="green-text text-darken-2">Productos relacionados</h4>
-        <div class="row">
-            {% for product in productos_relacionados %}
-                <div class="col s12 m6 l4">
-                    <div class="card hoverable">
-                        <div class="card-image" style="position: relative;">
-                            <!-- Iconos en la parte superior de la tarjeta -->
-                            {% if user.is_authenticated %}
-                                <div class="card-icons" style="position: absolute; top: 10px; left: 10px; z-index:100">
-                                    <!-- Alergias del usuario -->
-                                    {% with user_alergias=request.session.alergias %}
-                                        {% for alergia in product.alergias.all %}
-                                            {% if alergia.nombre in user_alergias %}
-                                                <i class="material-icons small amber-text text-darken-3" title="Alergia: {{ alergia.nombre }}">
-                                                    {% if alergia.nombre == 'gluten' %}
-                                                        report
-                                                    {% elif alergia.nombre == 'lactosa' %}
-                                                        block
-                                                    {% elif alergia.nombre == 'soja' %}
-                                                        medical_services
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endwith %}
-                                    
-                                    <!-- Gustos del usuario -->
-                                    {% with user_gustos=request.session.gustos_hamburguesas %}
-                                        {% for gusto in product.gustos.all %}
-                                            {% if gusto.nombre in user_gustos %}
-                                                <i class="material-icons small pink-text text-lighten-1" title="Gusto: {{ gusto.nombre }}">
-                                                    {% if gusto.nombre == 'clasica' %}
-                                                        favorite
-                                                    {% elif gusto.nombre == 'doble' %}
-                                                        double_arrow
-                                                    {% elif gusto.nombre == 'vegetariana' %}
-                                                        spa
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endwith %}
-
-                                    <!-- Preferencias dietéticas del usuario -->
-                                    {% with user_preferencias=request.session.preferencias_dieteticas %}
-                                        {% for preferencia in product.preferencias_dieteticas.all %}
-                                            {% if preferencia.nombre in user_preferencias %}
-                                                <i class="material-icons small green-text text-darken-2" title="Preferencia Dietética: {{ preferencia.nombre }}">
-                                                    {% if preferencia.nombre == 'vegano' %}
-                                                        grass
-                                                    {% elif preferencia.nombre == 'vegetariano' %}
-                                                        eco
-                                                    {% elif preferencia.nombre == 'carnivoro' %}
-                                                        set_meal
-                                                    {% endif %}
-                                                </i>
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endwith %}
-                                </div>
-                            {% endif %}
-
-                            <!-- Imagen del producto -->
-                            <img data-src="{{ product.imagen_url}}" src="{% static 'images/sample/generic-placeholder.jpg' %}"  alt="{{ product.titulo }}" class="lazy" data-id="{{ product.id }}">
-                            <span class="card-title">{{ product.titulo }}</span>
-                            <a href="{% url 'product:producto_detalle' slug=product.product_slug %}" class="btn-floating halfway-fab waves-effect waves-light red">
-                                <i class="material-icons">add</i>
-                            </a>
-                            <span class="price-tag right red-text">{{ product.precio }}</span>
-                        </div>
-                        <div class="card-content product-card">
-                            <p>{{ product.descripcion | safe }}</p>
-                            <div class="card-action">
-                                <a href="#" class="btn waves-effect waves-light teal">
-                                    <i class="material-icons left">add_shopping_cart</i>Añadir al carrito
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
 </div>
 {% endblock %}

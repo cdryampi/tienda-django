@@ -3,54 +3,51 @@ from .models import Product, Category
 from core.utils.idioma import IdiomaMixin
 from django.http import HttpResponseNotAllowed
 
-
-
-
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'product/product_detail.html'
-    context_object_name = 'producto'
+    context_object_name = 'product'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        product_obj = self.object  # Guardamos el objeto para evitar múltiples llamadas
+
+        # Obtener idioma y moneda preferida
         current_language = IdiomaMixin.get_idioma(self)
         moneda = IdiomaMixin.get_moneda_preferida(current_language)
 
-        context['product'] = self.get_object()
-        context['product_price'] = self.get_object().precios.filter(precio_currency=moneda).first().precio
-        # Consulta de productos relacionados (excluyendo el producto actual)
+        # Obtener el precio del producto en la moneda deseada o el primero disponible
+        precio_actual = product_obj.precios.filter(precio_currency=moneda).first()
+        if not precio_actual:
+            precio_actual = product_obj.precios.first()
+
+        # Construcción del diccionario de producto
+        product_data = {
+            'id': product_obj.id,
+            'titulo': product_obj.safe_translation_getter('titulo', current_language),
+            'descripcion': product_obj.safe_translation_getter('descripcion', current_language),
+            'precio': precio_actual.precio if precio_actual else None,
+            'imagen_url': product_obj.imagen.file.url if product_obj.imagen else None,
+            'product_slug': product_obj.slug,
+            'alergias': product_obj.alergias.all(),
+            'tipo_hamburguesa': product_obj.hamburguesa.nombre if product_obj.hamburguesa else None
+        }
+
+        # Consulta de productos relacionados optimizada
         productos_relacionados_queryset = Product.objects.prefetch_related(
-            'precios', 'alergias', 'hamburguesa'
-        ).active_translations(
-            current_language
+            'precios', 
+            'alergias', 
+            'hamburguesa'
         ).filter(
             is_active=True,
-            categoria = self.object.categoria
-        ).exclude(
-            pk=self.object.pk  # Excluir el producto actual
-        ).distinct()[:4]
+            categoria=product_obj.categoria
+        ).exclude(pk=product_obj.pk)  # Excluir el producto actual
 
-        productos_relacionados = []
-        for producto in productos_relacionados_queryset:
-            # Obtener el precio basado en la moneda preferida o el primer precio disponible
-            precio = producto.precios.filter(precio_currency=moneda).first()
-            if not precio:
-                precio = producto.precios.first()
 
-            # Construir el diccionario para cada producto con la información necesaria
-            productos_relacionados.append({
-                'id': producto.id,
-                'titulo': producto.safe_translation_getter('titulo', current_language),
-                'descripcion': producto.safe_translation_getter('descripcion', current_language),
-                'precio': precio.precio if precio else None,  # Precio en la moneda seleccionada o None
-                'imagen_url': producto.imagen.file.url if producto.imagen else None,
-                'product_slug': producto.slug,
-                'alergias': producto.alergias.all(),  # Alergias asociadas
-                'tipo_hamburguesa': producto.hamburguesa.nombre if producto.hamburguesa else None  # Tipo de hamburguesa
-            })
 
-        # Añadir los productos relacionados al contexto
-        context['productos_relacionados'] = productos_relacionados
+
+        # Agregar al contexto
+        context['product'] = product_data
 
         return context
 
