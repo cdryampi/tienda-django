@@ -6,7 +6,7 @@
         :alt="product.title"
         class="w-12 h-12 object-cover rounded"
       />
-      <span class="text-gray-900 dark:text-white">{{ product.title }}</span>
+      <span class="text-gray-900 dark:text-teal-500">{{ product.title }}</span>
     </td>
 
     <td class="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">
