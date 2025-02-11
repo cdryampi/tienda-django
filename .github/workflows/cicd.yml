@@ -73,13 +73,6 @@ jobs:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          ALLOWED_HOSTS: "localhost, 127.0.0.1"
-          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
-          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
-          STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          DEBUG: ${{ secrets.DEBUG }}
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
         run: |
           python manage.py migrate
@@ -111,20 +104,6 @@ jobs:
             sudo chown -R ubuntu:www-data /home/ubuntu/tienda-django/static_files/
             sudo chmod -R 775 /home/ubuntu/tienda-django/static_files/
           EOF
-      - name: Generate .env file on the server
-        run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
-            echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > /home/ubuntu/tienda-django/.env
-            echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> /home/ubuntu/tienda-django/.env
-            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> /home/ubuntu/tienda-django/.env
-            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /home/ubuntu/tienda-django/.env
-            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> /home/ubuntu/tienda-django/.env
-            echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> /home/ubuntu/tienda-django/.env
-            echo "FACEBOOK_APP_SECRET=${{ secrets.FACEBOOK_APP_SECRET }}" >> /home/ubuntu/tienda-django/.env
-            echo "STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}" >> /home/ubuntu/tienda-django/.env
-            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> /home/ubuntu/tienda-django/.env
-            echo "DEBUG=${{ secrets.DEBUG }}" >> /home/ubuntu/tienda-django/.env
-          EOF
 
       - name: Deploy to EC2
         run: |
@@ -148,6 +127,21 @@ jobs:
             python manage.py collectstatic --noinput --clear
             python manage.py create_initial_data
 
+          EOF
+
+      - name: Generate .env file on the server
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.AWS_EC2_HOST }} << 'EOF'
+            echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > /home/ubuntu/tienda-django/.env
+            echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> /home/ubuntu/tienda-django/.env
+            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> /home/ubuntu/tienda-django/.env
+            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /home/ubuntu/tienda-django/.env
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> /home/ubuntu/tienda-django/.env
+            echo "FACEBOOK_APP_ID=${{ secrets.FACEBOOK_APP_ID }}" >> /home/ubuntu/tienda-django/.env
+            echo "FACEBOOK_APP_SECRET=${{ secrets.FACEBOOK_APP_SECRET }}" >> /home/ubuntu/tienda-django/.env
+            echo "STRIPE_PUBLIC_KEY=${{ secrets.STRIPE_PUBLIC_KEY }}" >> /home/ubuntu/tienda-django/.env
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> /home/ubuntu/tienda-django/.env
+            echo "DEBUG=${{ secrets.DEBUG }}" >> /home/ubuntu/tienda-django/.env
           EOF
 
       - name: Restore permissions after pull and restart Gunicorn
