@@ -13,17 +13,16 @@ Este es un proyecto basado en Django 5.0 que implementa una tienda en línea con
 
 ## Índice
 
-1. 🛠 Requisitos previos
-2. 🚀 Instalación
-3. 🛒 Integración con Stripe
-4. 📂 Aplicaciones Instaladas
-5. 🔐 Autenticación y Permisos
-6. 🌍 Configuración de Idiomas
-7. 📦 Archivos Estáticos y Multimedia
-8. 💼 Panel de Administración
-9. 🚢 Despliegue en Producción
-10. 📸 Capturas de Pantalla
-11. 📝 Historias de Guerra
+1. 🛠 [Requisitos previos](#-requisitos-previos)
+2. 🚀 [Instalación](#-instalación)
+3. 🛒 [Integración con Stripe](#-integración-con-stripe)
+4. 📂 [Aplicaciones Instaladas](#aplicaciones-instaladas)
+5. 🔐 [Autenticación y Permisos](#-autenticación-y-permisos)
+6. 🌍 [Configuración de Idiomas](#-configuración-de-idiomas)
+7. 📦 [Archivos Estáticos y Multimedia](#-archivos-estáticos-y-multimedia)
+8. 💼 [Panel de Administración](#-panel-de-administración)
+9. 🚢 [Despliegue en Producción](#-despliegue-en-producción)
+10. 📝 [Historias de Guerra](#retos-y-problemas-encontrados)
 
 ---
 
